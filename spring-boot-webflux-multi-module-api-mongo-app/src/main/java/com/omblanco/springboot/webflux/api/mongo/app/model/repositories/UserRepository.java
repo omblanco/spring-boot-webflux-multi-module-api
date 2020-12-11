@@ -25,6 +25,6 @@ public interface UserRepository extends ReactiveMongoRepository<User, String>, C
      * @return
      */
     Flux<User> findBy(Aggregation aggregation, Pageable pageable);
+
     Mono<Long> countBy(Aggregation aggregation);
-    
 }

@@ -26,5 +26,4 @@ public interface UserService extends CommonService<UserDTO, User, String>{
      * @return Usuario
      */
     Mono<UserDTO> findByEmail(String email);
-    
 }

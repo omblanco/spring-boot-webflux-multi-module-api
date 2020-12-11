@@ -26,6 +26,12 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<!-- TODO: se usa sólo para la paginación, implementar una clase página para eliminar esta dependencia de la interface  -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+		</dependency>
 		
 	</dependencies>
 </project>
