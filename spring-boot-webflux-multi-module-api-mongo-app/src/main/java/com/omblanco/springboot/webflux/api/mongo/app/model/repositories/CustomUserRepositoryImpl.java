@@ -34,6 +34,7 @@ public class CustomUserRepositoryImpl extends AbstractCustomUserRepositoryImpl i
 
     @Override
     public Flux<User> findBy(UserFilterDTO filter, Pageable pageable) {
+        
         List<AggregationOperation> operations = new ArrayList<AggregationOperation>();
         
         addIlikeOperation(operations, NAME_PARAM, filter.getName());

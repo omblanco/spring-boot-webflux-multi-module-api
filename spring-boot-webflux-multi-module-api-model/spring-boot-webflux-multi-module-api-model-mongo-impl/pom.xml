@@ -13,6 +13,20 @@
 	<name>spring-boot-webflux-multi-module-api-model-mongo-impl</name>
 
 	<dependencies>
+	
+		<!-- Interfaz del modelo -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-model-interface</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+		
+		<!-- Spring data mongodb reactive -->
+		<!-- TODO: revisar si se puede eliminar el starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
+		</dependency>		
 
 		<!-- Reactor -->
 		<dependency>
