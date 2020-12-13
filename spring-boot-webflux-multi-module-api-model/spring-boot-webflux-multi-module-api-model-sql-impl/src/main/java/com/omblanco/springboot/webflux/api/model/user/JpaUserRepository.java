@@ -13,7 +13,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author ombla
  *
  */
-interface JpaUserRepository extends JpaRepository<User, Long> {
+public interface JpaUserRepository extends JpaRepository<User, Long> {
     
     /**
      * Busca un usuario por email

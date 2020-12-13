@@ -8,7 +8,6 @@ import java.util.function.Function;
 
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -21,7 +20,6 @@ import lombok.AllArgsConstructor;
  *
  */
 @AllArgsConstructor
-@Component
 public class TokenProvider implements Serializable {
 
     private PropertyResolver propertyResolver;

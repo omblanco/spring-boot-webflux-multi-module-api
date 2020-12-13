@@ -13,6 +13,12 @@
 	<name>spring-boot-webflux-multi-module-api-commons</name>
 
 	<dependencies>
+		<!-- Interface del acceso a datos -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-model-interface</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
 		<!-- Reactor -->
 		<dependency>
@@ -82,6 +88,5 @@
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
 		</dependency>
-
 	</dependencies>
 </project>

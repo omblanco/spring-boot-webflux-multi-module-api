@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.omblanco.springboot.webflux.api.commons.web.controllers.CommonController;
 import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
-import com.omblanco.springboot.webflux.api.mongo.app.model.entity.User;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
 import com.omblanco.springboot.webflux.api.mongo.app.services.UserService;
 import com.omblanco.springboot.webflux.api.mongo.app.web.dtos.UserDTO;
 
@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
  */
 @Controller
 @RequestMapping(USER_BASE_URL_V1)
-public class UserController extends CommonController<UserDTO, User, UserService, String> {
+public class UserController extends CommonController<UserDTO, UserDAO<String>, UserService, String> {
     
     @Builder
     public UserController(UserService service) {

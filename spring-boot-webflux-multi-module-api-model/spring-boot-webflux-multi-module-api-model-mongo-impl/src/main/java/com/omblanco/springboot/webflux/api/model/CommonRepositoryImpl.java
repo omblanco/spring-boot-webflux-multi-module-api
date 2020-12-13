@@ -34,7 +34,7 @@ import reactor.core.publisher.Mono;
 public abstract class CommonRepositoryImpl<DAO, M, ID, R extends ReactiveMongoRepository<M, ID>> implements CommonRepository<DAO, ID> {
 
     private static final String I_TOKEN = "i";
-    
+
     protected R reactiveMongoRepository;
     
     @Override

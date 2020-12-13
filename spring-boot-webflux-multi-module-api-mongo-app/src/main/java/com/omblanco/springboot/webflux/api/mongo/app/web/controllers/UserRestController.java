@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.omblanco.springboot.webflux.api.commons.web.controllers.CommonController;
 import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
-import com.omblanco.springboot.webflux.api.mongo.app.model.entity.User;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
 import com.omblanco.springboot.webflux.api.mongo.app.services.UserService;
 import com.omblanco.springboot.webflux.api.mongo.app.web.dtos.UserDTO;
 
@@ -33,7 +33,7 @@ import reactor.core.publisher.Mono;
  */
 @RestController
 @RequestMapping(USER_BASE_URL_V2)
-public class UserRestController extends CommonController<UserDTO, User, UserService, String> {
+public class UserRestController extends CommonController<UserDTO, UserDAO<String>, UserService, String> {
 
     @Builder
     public UserRestController(UserService service) {

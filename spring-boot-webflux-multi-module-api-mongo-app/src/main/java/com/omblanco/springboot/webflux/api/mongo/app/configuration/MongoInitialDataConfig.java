@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.omblanco.springboot.webflux.api.mongo.app.model.entity.User;
-import com.omblanco.springboot.webflux.api.mongo.app.model.repositories.ReactiveMongoUserRepository;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
+import com.omblanco.springboot.webflux.api.model.repository.user.UserRepository;
 
 import de.flapdoodle.embed.mongo.config.IMongoCmdOptions;
 import de.flapdoodle.embed.mongo.config.IMongodConfig;
@@ -63,15 +63,15 @@ public class MongoInitialDataConfig {
     }    
     
     @Bean
-    public ApplicationRunner loadInitalData(ReactiveMongoUserRepository userRepository) {
+    public ApplicationRunner loadInitalData(UserRepository userRepository) {
         return applicationRunner -> {
             // Limpiamos si hay usuarios
             userRepository.deleteAll().subscribe();
             
-            User user1 = new User(null, "John", "Doe", "john@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
-            User user2 = new User(null, "Oscar", "Suarez", "oscar@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
-            User user3 = new User(null, "Maria", "Salgado", "salgado@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
-            User user4 = new User(null, "Manuel", "Lopez", "manuel@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
+            UserDAO user1 = new UserDAO(null, "John", "Doe", "john@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
+            UserDAO user2 = new UserDAO(null, "Oscar", "Suarez", "oscar@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
+            UserDAO user3 = new UserDAO(null, "Maria", "Salgado", "salgado@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
+            UserDAO user4 = new UserDAO(null, "Manuel", "Lopez", "manuel@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
             
             Flux.just(user1, user2, user3, user4)
                 .flatMap(userRepository::save)

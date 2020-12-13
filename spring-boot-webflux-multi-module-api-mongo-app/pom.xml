@@ -16,6 +16,14 @@
 
 	<dependencies>
 
+		<!-- Implementación de accedo a datos para mongo -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-model-mongo-impl</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./Implementación de accedo a datos para mongo -->
+
 		<!-- simple-api -->
 		<dependency>
 			<groupId>com.omblanco.springboot.webflux.api</groupId>

@@ -5,12 +5,12 @@ import org.springframework.data.domain.Pageable;
 
 import com.omblanco.springboot.webflux.api.commons.services.CommonService;
 import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
-import com.omblanco.springboot.webflux.api.mongo.app.model.entity.User;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
 import com.omblanco.springboot.webflux.api.mongo.app.web.dtos.UserDTO;
 
 import reactor.core.publisher.Mono;
 
-public interface UserService extends CommonService<UserDTO, User, String>{
+public interface UserService extends CommonService<UserDTO, UserDAO<String>, String>{
 
     /**
      * Recupera usuarios paginados y filtrados

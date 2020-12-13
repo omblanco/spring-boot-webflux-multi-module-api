@@ -67,4 +67,12 @@ class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<Long>, User, Long,
     protected User convertToModel(UserDAO<Long> dao) {
         return modelMapper.map(dao, User.class);
     }
+
+    @Override
+    public Mono<Void> deleteAll() {
+        return Mono.defer(() -> {
+            jpaRepository.deleteAll();
+            return Mono.empty();
+        }).subscribeOn(Schedulers.boundedElastic()).then();
+    }
 }

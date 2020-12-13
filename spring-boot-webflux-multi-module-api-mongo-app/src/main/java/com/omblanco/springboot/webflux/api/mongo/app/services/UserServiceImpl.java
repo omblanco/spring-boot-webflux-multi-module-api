@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
 
 import com.omblanco.springboot.webflux.api.commons.services.CommonReactiveServiceImpl;
 import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
-import com.omblanco.springboot.webflux.api.mongo.app.model.entity.User;
-import com.omblanco.springboot.webflux.api.mongo.app.model.repositories.ReactiveMongoUserRepository;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserFilterDAO;
+import com.omblanco.springboot.webflux.api.model.repository.user.UserRepository;
 import com.omblanco.springboot.webflux.api.mongo.app.web.dtos.UserDTO;
 
 import lombok.Builder;
@@ -24,7 +25,7 @@ import reactor.core.publisher.Mono;
  *
  */
 @Service
-public class UserServiceImpl extends CommonReactiveServiceImpl<UserDTO, User, ReactiveMongoUserRepository, String> implements UserService {
+public class UserServiceImpl extends CommonReactiveServiceImpl<UserDTO, UserDAO<String>, UserRepository<String>, String> implements UserService {
 
     private ModelMapper modelMapper;
     
@@ -32,7 +33,7 @@ public class UserServiceImpl extends CommonReactiveServiceImpl<UserDTO, User, Re
         
     
     @Builder
-    public UserServiceImpl(ReactiveMongoUserRepository repository, ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository<String> repository, ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder) {
         super(repository);
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
@@ -46,11 +47,8 @@ public class UserServiceImpl extends CommonReactiveServiceImpl<UserDTO, User, Re
 
     @Override
     public Mono<Page<UserDTO>> findByFilter(UserFilterDTO filter, Pageable pageable) {
-        return repository.countBy(filter).flatMap(count -> {
-            return repository.findBy(filter, pageable).collect(Collectors.toList()).flatMap(users -> {
-                return Mono.just(convertPageToDto(new PageImpl<User>(users, pageable, count)));
-            });
-        });
+        return repository.findAll(convertFilterToDao(filter), pageable)
+                .map(this::convertPageToDto);
     }
 
     @Override
@@ -59,19 +57,28 @@ public class UserServiceImpl extends CommonReactiveServiceImpl<UserDTO, User, Re
     }
 
     @Override
-    protected UserDTO convertToDto(User entity) {
+    protected UserDTO convertToDto(UserDAO<String> entity) {
         return modelMapper.map(entity, UserDTO.class);
     }
 
     @Override
-    protected Page<UserDTO> convertPageToDto(Page<User> entityPage) {
-        return new PageImpl<UserDTO>(entityPage.getContent().stream().map(user -> {
-            return this.convertToDto(user);
-        }).collect(Collectors.toList()), entityPage.getPageable(), entityPage.getTotalElements());
+    protected Page<UserDTO> convertPageToDto(Page<UserDAO<String>> entityPage) {
+      return new PageImpl<UserDTO>(entityPage.getContent().stream().map(user -> {
+          return this.convertToDto(user);
+      }).collect(Collectors.toList()), entityPage.getPageable(), entityPage.getTotalElements());
     }
 
     @Override
-    protected User convertToEntity(UserDTO dto) {
-        return modelMapper.map(dto, User.class);
+    protected UserDAO<String> convertToEntity(UserDTO dto) {
+        return modelMapper.map(dto, UserDAO.class);
+    }
+    
+    /**
+     * Transforma un filtro dto en un filtro dao
+     * @param dto Filtro de la capa de vista
+     * @return Filtro de la capa de persistencia
+     */
+    private UserFilterDAO convertFilterToDao(UserFilterDTO dto) {
+        return modelMapper.map(dto, UserFilterDAO.class);
     }
 }

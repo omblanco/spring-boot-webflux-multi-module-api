@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Component;
 
 import com.omblanco.springboot.webflux.api.model.CommonRepositoryImpl;
 import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
@@ -27,21 +28,21 @@ import reactor.core.publisher.Mono;
  * @author oscar.martinezblanco
  *
  */
+@Component
 public class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<String>, User, String, MongoUserRepository> implements UserRepository<String> {
-    
     private static final String NAME_PARAM = "name";
     private static final String EMAIL_PARAM = "email";
     private static final String SURNAME_PARAM = "surname";
     
     private ModelMapper modelMapper;
     
-    private ReactiveMongoTemplate template;
+    private ReactiveMongoTemplate mongoTemplate;
     
     @Builder
-    public UserRepositoryImpl(MongoUserRepository reactiveMongoRepository, ReactiveMongoTemplate template,
+    public UserRepositoryImpl(MongoUserRepository reactiveMongoRepository, ReactiveMongoTemplate mongoTemplate,
             ModelMapper modelMapper) {
         super(reactiveMongoRepository);
-        this.template = template;
+        this.mongoTemplate = mongoTemplate;
         this.modelMapper = modelMapper;
     }
 
@@ -63,7 +64,7 @@ public class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<String>, Us
 
         Aggregation aggregate = Aggregation.newAggregation(operations);
         
-        return template.aggregate(aggregate, User.class, User.class);
+        return mongoTemplate.aggregate(aggregate, User.class, User.class);
     }
     
     /**
@@ -79,7 +80,7 @@ public class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<String>, Us
         addILikeCriteriaToQuery(query, EMAIL_PARAM, filter.getEmail());
         addILikeCriteriaToQuery(query, SURNAME_PARAM, filter.getSurname());
         
-        return template.count(query, User.class);
+        return mongoTemplate.count(query, User.class);
     }
 
     @Override
@@ -111,5 +112,10 @@ public class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<String>, Us
     @Override
     protected User convertToModel(UserDAO<String> dao) {
         return modelMapper.map(dao, User.class);
+    }
+
+    @Override
+    public Mono<Void> deleteAll() {
+        return reactiveMongoRepository.deleteAll();
     }
 }
