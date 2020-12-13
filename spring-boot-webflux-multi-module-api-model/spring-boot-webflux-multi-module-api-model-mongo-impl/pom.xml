@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.omblanco.springboot.webflux.api</groupId>
 		<artifactId>spring-boot-webflux-multi-module-api-model</artifactId>
-		<version>1.7.0</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<artifactId>spring-boot-webflux-multi-module-api-model-mongo-impl</artifactId>
@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>com.omblanco.springboot.webflux.api</groupId>
 			<artifactId>spring-boot-webflux-multi-module-api-model-interface</artifactId>
-			<version>1.7.0</version>
+			<version>1.0.0</version>
 		</dependency>
 		
 		<!-- Spring data mongodb reactive -->
@@ -39,6 +39,12 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+		
+		<!-- Modelmapper -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
 		</dependency>
 		
 	</dependencies>

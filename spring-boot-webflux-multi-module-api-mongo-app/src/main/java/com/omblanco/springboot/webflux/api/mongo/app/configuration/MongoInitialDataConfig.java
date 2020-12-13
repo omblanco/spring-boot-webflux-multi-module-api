@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.omblanco.springboot.webflux.api.mongo.app.model.entity.User;
-import com.omblanco.springboot.webflux.api.mongo.app.model.repositories.UserRepository;
+import com.omblanco.springboot.webflux.api.mongo.app.model.repositories.ReactiveMongoUserRepository;
 
 import de.flapdoodle.embed.mongo.config.IMongoCmdOptions;
 import de.flapdoodle.embed.mongo.config.IMongodConfig;
@@ -63,7 +63,7 @@ public class MongoInitialDataConfig {
     }    
     
     @Bean
-    public ApplicationRunner loadInitalData(UserRepository userRepository) {
+    public ApplicationRunner loadInitalData(ReactiveMongoUserRepository userRepository) {
         return applicationRunner -> {
             // Limpiamos si hay usuarios
             userRepository.deleteAll().subscribe();

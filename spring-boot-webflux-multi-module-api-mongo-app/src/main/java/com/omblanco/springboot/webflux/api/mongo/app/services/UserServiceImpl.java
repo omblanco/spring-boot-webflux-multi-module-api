@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.omblanco.springboot.webflux.api.commons.services.CommonReactiveServiceImpl;
 import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
 import com.omblanco.springboot.webflux.api.mongo.app.model.entity.User;
-import com.omblanco.springboot.webflux.api.mongo.app.model.repositories.UserRepository;
+import com.omblanco.springboot.webflux.api.mongo.app.model.repositories.ReactiveMongoUserRepository;
 import com.omblanco.springboot.webflux.api.mongo.app.web.dtos.UserDTO;
 
 import lombok.Builder;
@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
  *
  */
 @Service
-public class UserServiceImpl extends CommonReactiveServiceImpl<UserDTO, User, UserRepository, String> implements UserService {
+public class UserServiceImpl extends CommonReactiveServiceImpl<UserDTO, User, ReactiveMongoUserRepository, String> implements UserService {
 
     private ModelMapper modelMapper;
     
@@ -32,7 +32,7 @@ public class UserServiceImpl extends CommonReactiveServiceImpl<UserDTO, User, Us
         
     
     @Builder
-    public UserServiceImpl(UserRepository repository, ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(ReactiveMongoUserRepository repository, ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder) {
         super(repository);
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
@@ -50,7 +50,7 @@ public class UserServiceImpl extends CommonReactiveServiceImpl<UserDTO, User, Us
             return repository.findBy(filter, pageable).collect(Collectors.toList()).flatMap(users -> {
                 return Mono.just(convertPageToDto(new PageImpl<User>(users, pageable, count)));
             });
-        });        
+        });
     }
 
     @Override

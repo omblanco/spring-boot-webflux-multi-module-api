@@ -23,12 +23,12 @@ import reactor.core.scheduler.Schedulers;
  *
  */
 @Repository
-class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<Long>, User, Long, UserRepositoryJpa> implements UserRepository<Long> {
+class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<Long>, User, Long, JpaUserRepository> implements UserRepository<Long> {
 
     private ModelMapper modelMapper;
     
     @Builder
-    public UserRepositoryImpl(UserRepositoryJpa jpaRepository, ModelMapper modelMapper) {
+    public UserRepositoryImpl(JpaUserRepository jpaRepository, ModelMapper modelMapper) {
         super(jpaRepository);
         this.modelMapper = modelMapper;
     }
@@ -67,6 +67,4 @@ class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<Long>, User, Long,
     protected User convertToModel(UserDAO<Long> dao) {
         return modelMapper.map(dao, User.class);
     }
-
-
 }
