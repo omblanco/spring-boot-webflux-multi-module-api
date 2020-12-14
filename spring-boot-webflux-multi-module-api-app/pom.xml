@@ -15,6 +15,14 @@
 	<description>Aplicación básica para una api rest con WebFlux</description>
 
 	<dependencies>
+	
+		<!-- Implementación de accedo a datos para sql -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-model-sql-impl</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./Implementación de accedo a datos para sql -->	
 		
 		<!-- simple-api -->
 		<dependency>

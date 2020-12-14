@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 @Traceable
 @Loggable
 @AllArgsConstructor
-public abstract class CommonReactiveServiceImpl <D, E, R extends CommonRepository<E, String>, K> implements CommonService<D, E, K>{
+public abstract class CommonReactiveServiceImpl <D, E, R extends CommonRepository<E, K>, K> implements CommonService<D, E, K>{
 
     protected R repository;
     
@@ -37,7 +37,7 @@ public abstract class CommonReactiveServiceImpl <D, E, R extends CommonRepositor
 
     @Override
     public Mono<D> findById(K id) {
-        return repository.findById(id.toString()).map(this::convertToDto);
+        return repository.findById(id).map(this::convertToDto);
     }
 
     @Override

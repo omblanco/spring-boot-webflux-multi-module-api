@@ -9,16 +9,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.omblanco.springboot.webflux.api.app.model.entity.User;
-import com.omblanco.springboot.webflux.api.app.model.repository.UserRepository;
-import com.omblanco.springboot.webflux.api.app.model.specifications.UserSpecifications;
 import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
-import com.omblanco.springboot.webflux.api.commons.services.CommonServiceImpl;
+import com.omblanco.springboot.webflux.api.commons.services.CommonReactiveServiceImpl;
 import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserFilterDAO;
+import com.omblanco.springboot.webflux.api.model.repository.user.UserRepository;
 
 import lombok.Builder;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 /**
  * Implmentación del servicio de usuarios
@@ -26,14 +25,14 @@ import reactor.core.scheduler.Schedulers;
  *
  */
 @Service
-public class UserServiceImpl extends CommonServiceImpl<UserDTO, User, UserRepository, Long> implements UserService {
+public class UserServiceImpl extends CommonReactiveServiceImpl<UserDTO, UserDAO<Long>, UserRepository<Long>, Long> implements UserService {
 
     private ModelMapper modelMapper;
     
     private BCryptPasswordEncoder passwordEncoder;
-    
+
     @Builder
-    public UserServiceImpl(UserRepository repository, ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository<Long> repository, ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder) {
         super(repository);
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
@@ -41,9 +40,8 @@ public class UserServiceImpl extends CommonServiceImpl<UserDTO, User, UserReposi
 
     @Override
     public Mono<Page<UserDTO>> findByFilter(UserFilterDTO filter, Pageable pageable) {
-        return Mono.defer(() -> Mono.just(repository.findAll(UserSpecifications.withFilter(filter), pageable)))
-            .map(this::convertPageToDto)
-            .subscribeOn(Schedulers.boundedElastic());
+        return repository.findAll(convertFilterToDao(filter), pageable)
+                .map(this::convertPageToDto);
     }
 
     @Override
@@ -54,32 +52,26 @@ public class UserServiceImpl extends CommonServiceImpl<UserDTO, User, UserReposi
 
     @Override
     public Mono<UserDTO> findByEmail(String email) {
-        return Mono.defer(() -> Mono.just(repository.findByEmail(email))).flatMap(optional -> {
-            if (optional.isPresent()) {
-                return Mono.just(convertToDto(optional.get()));
-            }
-            
-            return Mono.empty();
-        }).subscribeOn(Schedulers.boundedElastic());
+        return repository.findByEmail(email).map(this::convertToDto);
     }
     
     /**
      * Conversión de Modelo a DTO
-     * @param user Usuario Modelo
+     * @param user Usuario DAO
      * @return Usuario DTO
      */
     @Override 
-    protected UserDTO convertToDto(User user) {
+    protected UserDTO convertToDto(UserDAO<Long> user) {
         return modelMapper.map(user, UserDTO.class);
     }
     
     /**
      * Transforma una página de modelos a dtos
-     * @param userPage Página de modelos
+     * @param userPage Página de DAOS
      * @return Página de dtos
      */
     @Override 
-    protected Page<UserDTO> convertPageToDto(Page<User> userPage) {
+    protected Page<UserDTO> convertPageToDto(Page<UserDAO<Long>> userPage) {
         return new PageImpl<UserDTO>(userPage.getContent().stream().map(user -> {
             return this.convertToDto(user);
         }).collect(Collectors.toList()), userPage.getPageable(), userPage.getTotalElements());
@@ -88,10 +80,24 @@ public class UserServiceImpl extends CommonServiceImpl<UserDTO, User, UserReposi
     /**
      * Conversión de DTO a Modelo
      * @param userDto DTO del usuario
-     * @return Modelo del usuario
+     * @return DAO del usuario
      */
     @Override
-    protected User convertToEntity(UserDTO userDto) {
-        return modelMapper.map(userDto, User.class);
+    protected UserDAO<Long> convertToEntity(UserDTO userDto) {
+        
+        UserDAO<Long> result = new UserDAO<Long>();
+        modelMapper.map(userDto, result);
+        result.setId(userDto.getId());
+        
+        return result;
+    }
+    
+    /**
+     * Transforma un filtro dto en un filtro dao
+     * @param dto Filtro de la capa de vista
+     * @return Filtro de la capa de persistencia
+     */
+    private UserFilterDAO convertFilterToDao(UserFilterDTO dto) {
+        return modelMapper.map(dto, UserFilterDAO.class);
     }
 }

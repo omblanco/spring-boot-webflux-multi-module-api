@@ -53,7 +53,13 @@ class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<Long>, User, Long,
     
     @Override
     protected UserDAO<Long> convertToDao(User model) {
-        return modelMapper.map(model, UserDAO.class);
+        
+        UserDAO<Long> result = new UserDAO<Long>();
+        modelMapper.map(model, result);
+        //TODO: id no funciona
+        result.setId(model.getId());
+        
+        return result;
     }
 
     @Override

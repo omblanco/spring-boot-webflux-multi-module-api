@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.omblanco.springboot.webflux.api.app.model.entity.User;
 import com.omblanco.springboot.webflux.api.app.services.UserService;
 import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
 import com.omblanco.springboot.webflux.api.commons.web.controllers.CommonController;
 import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
 
 import lombok.Builder;
 import reactor.core.CorePublisher;
@@ -33,7 +33,7 @@ import reactor.core.publisher.Mono;
  */
 @RestController
 @RequestMapping(USER_BASE_URL_V2)
-public class UserRestController extends CommonController<UserDTO, User, UserService, Long> {
+public class UserRestController extends CommonController<UserDTO, UserDAO<Long>, UserService, Long> {
 
     @Builder
     public UserRestController(UserService service) {

@@ -1,13 +1,11 @@
 package com.omblanco.springboot.webflux.api.app.services;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,9 +13,9 @@ import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.omblanco.springboot.webflux.api.app.model.entity.User;
-import com.omblanco.springboot.webflux.api.app.model.repository.UserRepository;
 import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
+import com.omblanco.springboot.webflux.api.model.repository.user.UserRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,7 +29,7 @@ import reactor.test.StepVerifier;
 public class UserServiceImplTests {
 
     @Mock
-    private UserRepository mockUserRepository;
+    private UserRepository<Long> mockUserRepository;
     
     @Mock
     private ModelMapper modelMapper;
@@ -50,9 +48,9 @@ public class UserServiceImplTests {
     @Test
     public void findAllTest() {
         //Given:
-        User user1 = new User(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        User user2 = new User(2L, "Mary", "Queen", "mary@mail.com", new Date(), "1234");
-        List<User> users = Arrays.asList(user1, user2);
+        UserDAO<Long> user1 = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> user2 = new UserDAO<Long>(2L, "Mary", "Queen", "mary@mail.com", new Date(), "1234");
+        List<UserDAO<Long>> users = Arrays.asList(user1, user2);
         
         UserDTO userDto1 = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         UserDTO userDto2 = new UserDTO(2L, "Mary", "Queen", "mary@mail.com", new Date(), "1234");
@@ -60,7 +58,7 @@ public class UserServiceImplTests {
         //when:
         when(modelMapper.map(user1, UserDTO.class)).thenReturn(userDto1);
         when(modelMapper.map(user2, UserDTO.class)).thenReturn(userDto2);
-        when(mockUserRepository.findAll()).thenReturn(users);
+        when(mockUserRepository.findAll()).thenReturn(Flux.fromIterable(users));
         
         Flux<UserDTO> fluxUsersDto = userService.findAll();
 
@@ -73,14 +71,14 @@ public class UserServiceImplTests {
     @Test
     public void findByIdTest() {
         //Given:
-        User user = new User(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         UserDTO userDto = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
         when(modelMapper.map(user, UserDTO.class)).thenReturn(userDto);
-        when(mockUserRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(mockUserRepository.findById(2L)).thenReturn(Optional.empty());
+        when(mockUserRepository.findById(user.getId())).thenReturn(Mono.just(user));
+        when(mockUserRepository.findById(2L)).thenReturn(Mono.empty());
         
         Mono<UserDTO> monoUser = userService.findById(user.getId());
         Mono<UserDTO> monoVoid = userService.findById(2L);
@@ -94,11 +92,11 @@ public class UserServiceImplTests {
     public void saveTest() {
         //Given:
         UserDTO userDto = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        User user = new User(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
-        when(mockUserRepository.save(user)).thenReturn(user);
-        when(modelMapper.map(userDto, User.class)).thenReturn(user);
+        when(mockUserRepository.save(user)).thenReturn(Mono.just(user));
+        when(modelMapper.map(userDto, UserDAO.class)).thenReturn(user);
         when(modelMapper.map(user, UserDTO.class)).thenReturn(userDto);
         
         //Then:
@@ -110,12 +108,12 @@ public class UserServiceImplTests {
     @Test
     public void deleteTest() {
         //Given:
-        User user = new User(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         UserDTO userDto = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
-        when(modelMapper.map(userDto, User.class)).thenReturn(user);
-        doNothing().when(mockUserRepository).delete(user);
+        when(modelMapper.map(userDto, UserDAO.class)).thenReturn(user);
+        when(mockUserRepository.delete(user)).thenReturn(Mono.empty());
         Mono<Void> monoUser = userService.delete(userDto);
         
         //Then:

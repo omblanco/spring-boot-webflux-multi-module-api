@@ -31,11 +31,13 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import com.omblanco.springboot.webflux.api.app.configuration.ModelMapperConfig;
 import com.omblanco.springboot.webflux.api.app.configuration.SecurityConfig;
 import com.omblanco.springboot.webflux.api.app.configuration.SecurityWebFilterChainConfig;
-import com.omblanco.springboot.webflux.api.app.model.entity.User;
-import com.omblanco.springboot.webflux.api.app.model.repository.UserRepository;
 import com.omblanco.springboot.webflux.api.app.services.UserServiceImpl;
 import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
+import com.omblanco.springboot.webflux.api.model.entity.user.UserFilterDAO;
+import com.omblanco.springboot.webflux.api.model.repository.user.UserRepository;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -50,7 +52,7 @@ import reactor.core.publisher.Mono;
 public class UserControllerUnitTest {
     
     @MockBean
-    private UserRepository userRepository;
+    private UserRepository<Long> userRepository;
     
     @MockBean
     private BCryptPasswordEncoder passwordEncoder;
@@ -62,11 +64,11 @@ public class UserControllerUnitTest {
     @ValueSource(strings = {USER_BASE_URL_V1, USER_BASE_URL_V2})
     public void findAllTest(String path) throws Exception {
         //given:
-        User user1 = new User(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        User user2 = new User(1L, "Mary", "Queen", "mary@mail.com", new Date(), "1234");
+        UserDAO<Long> user1 = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> user2 = new UserDAO<Long>(1L, "Mary", "Queen", "mary@mail.com", new Date(), "1234");
         
         //when:
-        when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
+        when(userRepository.findAll()).thenReturn(Flux.just(user1, user2));
         webTestClient.get().uri(path)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
@@ -97,16 +99,17 @@ public class UserControllerUnitTest {
     @SuppressWarnings("unchecked")
     public void findFyFilterTest(String path) {
         //given
-        User user = new User(1L, "Maria", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> user = new UserDAO<Long>(1L, "Maria", "Doe", "john@mail.com", new Date(), "1234");
         
         String name = "Maria";
         Integer page = 0;
         Integer size = 10;
         
-        Page<User> pageUsers = new PageImpl<User>(Arrays.asList(user));
+        Page<UserDAO<Long>> pageUsers = new PageImpl<UserDAO<Long>>(Arrays.asList(user));
         
         //when
-        when(userRepository.findAll(ArgumentMatchers.any(Specification.class), ArgumentMatchers.any())).thenReturn(pageUsers);
+        when(userRepository.findAll(ArgumentMatchers.any(UserFilterDAO.class), ArgumentMatchers.any()))
+            .thenReturn(Mono.just(pageUsers));
         webTestClient.get().uri(uriBuilder ->
             uriBuilder
             .path(path)
@@ -127,18 +130,17 @@ public class UserControllerUnitTest {
         .jsonPath("$.content[0].name").isEqualTo(name);
         
         //then:
-        verify(userRepository, times(1)).findAll(ArgumentMatchers.any(Specification.class), ArgumentMatchers.any());
+        verify(userRepository, times(1)).findAll(ArgumentMatchers.any(UserFilterDAO.class), ArgumentMatchers.any());
     }    
     
     @ParameterizedTest
     @ValueSource(strings = {USER_BASE_URL_V1, USER_BASE_URL_V2})
     public void getByidTest(String path) {
         //given:
-        User user = new User(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        Optional<User> optionalUser = Optional.of(user);
+        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
-        when(userRepository.findById(user.getId())).thenReturn(optionalUser);
+        when(userRepository.findById(user.getId())).thenReturn(Mono.just(user));
         
         //then:
         webTestClient.get()
@@ -171,10 +173,10 @@ public class UserControllerUnitTest {
     public void postTest(String path) {
         //given:
         UserDTO userDtoRequest = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        User user = new User(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when
-        when(userRepository.save(ArgumentMatchers.any(User.class))).thenReturn(user);
+        when(userRepository.save(ArgumentMatchers.any(UserDAO.class))).thenReturn(Mono.just(user));
         when(passwordEncoder.encode(userDtoRequest.getPassword())).thenReturn("encodePassword");
         webTestClient.post()
         .uri(path)
@@ -197,7 +199,7 @@ public class UserControllerUnitTest {
         });
         
         //then:
-        verify(userRepository, times(1)).save(ArgumentMatchers.any(User.class));
+        verify(userRepository, times(1)).save(ArgumentMatchers.any(UserDAO.class));
     }
     
     @ParameterizedTest
@@ -205,12 +207,11 @@ public class UserControllerUnitTest {
     public void putTest(String path) {
         //given:
         UserDTO userDtoRequest = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        User user = new User(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        Optional<User> optionalUser = Optional.of(user);
+        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
-        when(userRepository.findById(user.getId())).thenReturn(optionalUser);
-        when(userRepository.save(ArgumentMatchers.any(User.class))).thenReturn(user);
+        when(userRepository.findById(user.getId())).thenReturn(Mono.just(user));
+        when(userRepository.save(ArgumentMatchers.any(UserDAO.class))).thenReturn(Mono.just(user));
         when(passwordEncoder.encode(user.getPassword())).thenReturn("encodePassword");
        
         webTestClient.put()
@@ -236,19 +237,18 @@ public class UserControllerUnitTest {
         
         //then:
         verify(userRepository, times(1)).findById(user.getId());
-        verify(userRepository, times(1)).save(ArgumentMatchers.any(User.class));
+        verify(userRepository, times(1)).save(ArgumentMatchers.any(UserDAO.class));
     }
     
     @ParameterizedTest
     @ValueSource(strings = {USER_BASE_URL_V1, USER_BASE_URL_V2})
     public void deleteTest(String path) {
         //given:
-        User user = new User(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        Optional<User> optionalUser = Optional.of(user);
+        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
-        when(userRepository.findById(user.getId())).thenReturn(optionalUser);
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.findById(user.getId())).thenReturn(Mono.just(user));
+        when(userRepository.save(user)).thenReturn(Mono.just(user));
         webTestClient.delete()
             .uri(path.concat("/{id}"), Collections.singletonMap("id", user.getId()))
             .exchange()
