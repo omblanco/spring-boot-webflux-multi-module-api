@@ -31,4 +31,10 @@ public interface UserRepository<ID> extends CommonRepository<UserDAO<ID>, ID> {
      * @return Página de usuarios
      */
     Mono<Page<UserDAO<ID>>> findAll(UserFilterDAO filter, Pageable pageable);
+    
+    /**
+     * Elimina todos los registros de un repositorio
+     * @return Resultado de la operación
+     */
+    Mono<Void> deleteAll();
 }
