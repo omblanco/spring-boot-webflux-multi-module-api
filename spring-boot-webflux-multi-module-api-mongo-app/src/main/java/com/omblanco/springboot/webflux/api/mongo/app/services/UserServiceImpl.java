@@ -1,8 +1,10 @@
 package com.omblanco.springboot.webflux.api.mongo.app.services;
 
+import java.lang.reflect.Type;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -70,7 +72,8 @@ public class UserServiceImpl extends CommonReactiveServiceImpl<UserDTO, UserDAO<
 
     @Override
     protected UserDAO<String> convertToEntity(UserDTO dto) {
-        return modelMapper.map(dto, UserDAO.class);
+        Type userType = new TypeToken<UserDAO<String>>() {}.getType();
+        return modelMapper.map(dto, userType);
     }
     
     /**

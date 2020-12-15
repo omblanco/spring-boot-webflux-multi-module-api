@@ -3,15 +3,17 @@ package com.omblanco.springboot.webflux.api.mongo.app;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
  * Clase principal de configuración de Spring Boot
  * @author oscar.martinezblanco
  *
  */
-@EnableMongoRepositories(basePackages = "com.omblanco.springboot.webflux.api.model")
-@ComponentScan("com.omblanco.springboot.webflux.api.mongo.app")
+
+@ComponentScan(basePackages = {
+        "com.omblanco.springboot.webflux.api.mongo.app",
+        "com.omblanco.springboot.webflux.api.model"
+})
 @SpringBootApplication
 public class SpringBootWebfluxSimpleApiMongoAppApplication {
 

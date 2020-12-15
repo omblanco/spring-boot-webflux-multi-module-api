@@ -15,7 +15,7 @@
 	<description>Aplicación básica para una api rest con Mongo y WebFlux</description>
 
 	<dependencies>
-
+	
 		<!-- Implementación de accedo a datos para mongo -->
 		<dependency>
 			<groupId>com.omblanco.springboot.webflux.api</groupId>
@@ -23,7 +23,7 @@
 			<version>1.0.0</version>
 		</dependency>
 		<!-- ./Implementación de accedo a datos para mongo -->
-
+		
 		<!-- simple-api -->
 		<dependency>
 			<groupId>com.omblanco.springboot.webflux.api</groupId>

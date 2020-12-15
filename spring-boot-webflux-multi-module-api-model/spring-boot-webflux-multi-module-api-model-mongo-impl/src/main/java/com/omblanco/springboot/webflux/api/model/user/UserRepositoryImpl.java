@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,7 @@ import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.omblanco.springboot.webflux.api.model.CommonRepositoryImpl;
 import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
@@ -22,13 +23,14 @@ import com.omblanco.springboot.webflux.api.model.repository.user.UserRepository;
 import lombok.Builder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.lang.reflect.Type;
 
 /**
  * Implementación del repositorio extendido para recuperar los usuarios paginados y ordenados
  * @author oscar.martinezblanco
  *
  */
-@Component
+@Repository
 public class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<String>, User, String, MongoUserRepository> implements UserRepository<String> {
     private static final String NAME_PARAM = "name";
     private static final String EMAIL_PARAM = "email";
@@ -99,7 +101,8 @@ public class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<String>, Us
 
     @Override
     protected UserDAO<String> convertToDao(User model) {
-        return modelMapper.map(model, UserDAO.class);
+        Type userType = new TypeToken<UserDAO<String>>() {}.getType();
+        return modelMapper.map(model, userType);
     }
 
     @Override

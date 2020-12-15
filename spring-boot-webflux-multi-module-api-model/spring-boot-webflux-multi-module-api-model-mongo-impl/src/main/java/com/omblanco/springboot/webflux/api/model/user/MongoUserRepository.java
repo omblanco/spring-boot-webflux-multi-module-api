@@ -4,6 +4,7 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import reactor.core.publisher.Mono;
 
+
 public interface MongoUserRepository extends ReactiveMongoRepository<User, String> {
     
     /**
