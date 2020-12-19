@@ -17,7 +17,7 @@ import com.omblanco.springboot.webflux.api.commons.security.TokenProvider;
 import com.omblanco.springboot.webflux.api.commons.web.dto.LoginRequestDTO;
 import com.omblanco.springboot.webflux.api.commons.web.dto.LoginResponseDTO;
 import com.omblanco.springboot.webflux.api.commons.web.handler.CommonHandler;
-import com.omblanco.springboot.webflux.api.mongo.app.services.UserService;
+import com.omblanco.springboot.webflux.api.service.user.UserService;
 
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -37,7 +37,7 @@ public class AuthHandler extends CommonHandler {
 
     private TokenProvider tokenProvider;
 
-    private UserService userService;
+    private UserService<String> userService;
     
     private Validator validator;
     

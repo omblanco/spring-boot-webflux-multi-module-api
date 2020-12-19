@@ -8,6 +8,7 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.omblanco.springboot.webflux.api.commons.annotation.loggable.Loggable;
-import com.omblanco.springboot.webflux.api.commons.services.CommonService;
 import com.omblanco.springboot.webflux.api.commons.web.dto.CommonDTO;
+import com.omblanco.springboot.webflux.api.service.CommonService;
 
 import lombok.AllArgsConstructor;
 import reactor.core.CorePublisher;
@@ -37,7 +38,7 @@ import reactor.core.publisher.Mono;
  */
 @Loggable
 @AllArgsConstructor
-public abstract class CommonController <D extends CommonDTO<K>, E, S extends CommonService<D, E, K>, K>{
+public abstract class CommonController <DTO extends CommonDTO<ID>, BO, DAO, S extends CommonService<BO, DAO, ID>, ID> {
 
     protected static final String ID_PARAM_URL = "/{id}";
     
@@ -51,7 +52,9 @@ public abstract class CommonController <D extends CommonDTO<K>, E, S extends Com
      */
     @ResponseBody
     protected Mono<ResponseEntity<CorePublisher<?>>> findAll() {
-        return Mono.just(ResponseEntity.ok().contentType(APPLICATION_JSON).body(service.findAll()));
+        return Mono.just(ResponseEntity.ok().contentType(APPLICATION_JSON)
+                .body(service.findAll()
+                .map(this::convertToDto)));
     }
     
     /**
@@ -62,10 +65,11 @@ public abstract class CommonController <D extends CommonDTO<K>, E, S extends Com
      */
     @GetMapping(ID_PARAM_URL)
     @ResponseBody
-    public Mono<ResponseEntity<D>> get(@PathVariable K id) {
-        return service.findById(id).map(d -> ResponseEntity.ok()
-                .contentType(APPLICATION_JSON).body(d))
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+    public Mono<ResponseEntity<DTO>> get(@PathVariable ID id) {
+        
+        return service.findById(id)
+            .map(bo -> ResponseEntity.ok().contentType(APPLICATION_JSON).body(convertToDto(bo)))
+            .defaultIfEmpty(ResponseEntity.notFound().build());
     }
     
     /**
@@ -76,15 +80,14 @@ public abstract class CommonController <D extends CommonDTO<K>, E, S extends Com
      */
     @PostMapping
     @ResponseBody
-    public Mono<ResponseEntity<D>> create(@RequestBody @Valid Mono<D> monoDto) {
+    public Mono<ResponseEntity<DTO>> create(@RequestBody @Valid Mono<DTO> monoDto) {
         return monoDto.flatMap(dto -> {
             dto.setId(null);
-            return service.save(dto).map(dtoDb -> {
-                
-                return ResponseEntity
-                        .created(URI.create(getBaseUrl().concat(FORWARD_SLASH).concat(dtoDb.getId().toString())))
-                        .contentType(APPLICATION_JSON).body(dtoDb);
-            });
+            return service.save(convertToBo(dto))
+                    .map(this::convertToDto)
+                    .map(savedDto -> ResponseEntity
+                              .created(URI.create(getBaseUrl().concat(FORWARD_SLASH).concat(savedDto.getId().toString())))
+                              .contentType(APPLICATION_JSON).body(savedDto));
         });
     }
     
@@ -97,16 +100,13 @@ public abstract class CommonController <D extends CommonDTO<K>, E, S extends Com
      */
     @PutMapping(ID_PARAM_URL)
     @ResponseBody
-    public Mono<ResponseEntity<D>> update(@PathVariable K id, @Valid @RequestBody D dto) {
-        return service.findById(id).flatMap(dtoToSave -> {
-            
-            updateDtoToSave(dto, dtoToSave);
-
-            return service.save(dtoToSave);
-        }).map(dtoToSave -> ResponseEntity
-                .created(URI.create(getBaseUrl().concat(FORWARD_SLASH).concat(dtoToSave.getId().toString())))
+    public Mono<ResponseEntity<DTO>> update(@PathVariable ID id, @Valid @RequestBody DTO dto) {
+        return service.findById(id).flatMap(boToSave -> {
+            updateBoToSave(dto, boToSave);
+            return service.save(boToSave).map(this::convertToDto);
+        }).map(savedDTO -> ResponseEntity.created(URI.create(getBaseUrl().concat(FORWARD_SLASH).concat(savedDTO.getId().toString())))
                 .contentType(APPLICATION_JSON)
-                .body(dtoToSave))
+                .body(savedDTO))
         .defaultIfEmpty(ResponseEntity.notFound().build());
     }
     
@@ -117,7 +117,7 @@ public abstract class CommonController <D extends CommonDTO<K>, E, S extends Com
      * @return Resultado de la operación
      */
     @DeleteMapping(ID_PARAM_URL)
-    public Mono<ResponseEntity<Void>> delete(@PathVariable K id) {
+    public Mono<ResponseEntity<Void>> delete(@PathVariable ID id) {
         return service.findById(id).flatMap(dtoDb -> {
             return service.delete(dtoDb).then(Mono.just(new ResponseEntity<Void>(NO_CONTENT)));
         }).defaultIfEmpty(new ResponseEntity<Void>(NOT_FOUND));
@@ -125,5 +125,26 @@ public abstract class CommonController <D extends CommonDTO<K>, E, S extends Com
     
     protected abstract String getBaseUrl();
     
-    protected abstract void updateDtoToSave(D requestDto, D dbDto);
+    protected abstract void updateBoToSave(DTO requestDto, BO bo);
+    
+    /**
+     * Conversión de BO a DTO
+     * @param bo BO
+     * @return DTO
+     */
+    protected abstract DTO convertToDto(BO bo);
+    
+    /**
+     * Transforma una página de BOs en DTOs
+     * @param boPage Página de BOs
+     * @return Página de DTOs
+     */
+    protected abstract Page<DTO> convertPageToBo(Page<BO> boPage);
+    
+    /**
+     * Transforma un DTO en BO
+     * @param dto DTO
+     * @return BO
+     */
+    protected abstract BO convertToBo(DTO dto);
 }

@@ -19,6 +19,13 @@
 			<artifactId>spring-boot-webflux-multi-module-api-model-interface</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		
+		<!-- Interface del negocio -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-service-interface</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
 		<!-- Reactor -->
 		<dependency>

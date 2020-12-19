@@ -1,12 +1,10 @@
-package com.omblanco.springboot.webflux.api.app.services;
+package com.omblanco.springboot.webflux.api.service.user;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
-import com.omblanco.springboot.webflux.api.commons.services.CommonService;
-import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
 import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
+import com.omblanco.springboot.webflux.api.service.CommonService;
 
 import reactor.core.publisher.Mono;
 
@@ -15,7 +13,7 @@ import reactor.core.publisher.Mono;
  * @author oscar.martinezblanco
  *
  */
-public interface UserService extends CommonService<UserDTO, UserDAO<Long>, Long>{
+public interface UserService<ID> extends CommonService<UserBO<ID>, UserDAO<ID>, ID>{
 
     /**
      * Recupera usuarios paginados y filtrados
@@ -23,12 +21,12 @@ public interface UserService extends CommonService<UserDTO, UserDAO<Long>, Long>
      * @param pageable Paginación
      * @return Mono de página de usuarios
      */
-    Mono<Page<UserDTO>> findByFilter(UserFilterDTO filter, Pageable pageable);
+    Mono<Page<UserBO<ID>>> findByFilter(UserFilterBO filter, Pageable pageable);
     
     /**
      * Busca un usuario por email
      * @param email Email
      * @return Usuario
      */
-    Mono<UserDTO> findByEmail(String email);
+    Mono<UserBO<ID>> findByEmail(String email);
 }

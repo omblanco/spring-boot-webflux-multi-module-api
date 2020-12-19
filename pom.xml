@@ -23,14 +23,16 @@
 		<jjwt.version>0.9.1</jjwt.version>
 		<modelmapper.version>2.3.8</modelmapper.version>
 		<springfox.version>3.0.0</springfox.version>
+		<springdoc-openapi-webflux-ui.version>1.5.0</springdoc-openapi-webflux-ui.version>
 	</properties>
 
 	<modules>
 		<module>spring-boot-webflux-multi-module-api-model</module>
-		<module>spring-boot-webflux-multi-module-api-app</module>
-		<module>spring-boot-webflux-multi-module-api-mongo-app</module>
+		<module>spring-boot-webflux-multi-module-api-service</module>
 		<module>spring-boot-webflux-multi-module-api-commons</module>
 		<module>spring-boot-webflux-multi-module-api-client</module>
+		<module>spring-boot-webflux-multi-module-api-app</module>
+		<module>spring-boot-webflux-multi-module-api-mongo-app</module>
 	</modules>
 
 	<dependencyManagement>
@@ -61,7 +63,7 @@
 			<dependency>
 				<groupId>org.springdoc</groupId>
 				<artifactId>springdoc-openapi-webflux-ui</artifactId>
-				<version>1.5.0</version>
+				<version>${springdoc-openapi-webflux-ui.version}</version>
 			</dependency>
 			
 		</dependencies>

@@ -1,21 +1,25 @@
 package com.omblanco.springboot.webflux.api.app.services;
 
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
 import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
 import com.omblanco.springboot.webflux.api.model.repository.user.UserRepository;
+import com.omblanco.springboot.webflux.api.service.user.UserBO;
+import com.omblanco.springboot.webflux.api.service.user.UserService;
+import com.omblanco.springboot.webflux.api.service.user.UserServiceImpl;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,12 +41,12 @@ public class UserServiceImplTests {
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
     
-    private UserService userService;
+    private UserService<Long> userService;
     
     @BeforeEach
     public void setUp() {
-        initMocks(this);
-        userService = new UserServiceImpl(mockUserRepository, modelMapper, passwordEncoder);
+        openMocks(this);
+        userService = new UserServiceImpl<Long>(mockUserRepository, modelMapper, passwordEncoder);
     }
     
     @Test
@@ -52,20 +56,18 @@ public class UserServiceImplTests {
         UserDAO<Long> user2 = new UserDAO<Long>(2L, "Mary", "Queen", "mary@mail.com", new Date(), "1234");
         List<UserDAO<Long>> users = Arrays.asList(user1, user2);
         
-        UserDTO userDto1 = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        UserDTO userDto2 = new UserDTO(2L, "Mary", "Queen", "mary@mail.com", new Date(), "1234");
+        UserBO<Long> userBo1 = new UserBO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserBO<Long> userBo2 = new UserBO<Long>(2L, "Mary", "Queen", "mary@mail.com", new Date(), "1234");
         
         //when:
-        when(modelMapper.map(user1, UserDTO.class)).thenReturn(userDto1);
-        when(modelMapper.map(user2, UserDTO.class)).thenReturn(userDto2);
+        when(modelMapper.map(ArgumentMatchers.any(UserDAO.class), ArgumentMatchers.any(Type.class))).thenReturn(userBo1, userBo2);
         when(mockUserRepository.findAll()).thenReturn(Flux.fromIterable(users));
+        Flux<UserBO<Long>> fluxUsersBo = userService.findAll();
         
-        Flux<UserDTO> fluxUsersDto = userService.findAll();
-
         //Then:
-        StepVerifier.create(fluxUsersDto.log()).expectNextCount(2).verifyComplete();
-        StepVerifier.create(fluxUsersDto.log()).expectNext(userDto1).expectNext(userDto2).verifyComplete();
-        StepVerifier.create(fluxUsersDto.log()).expectNext(userDto1, userDto2).verifyComplete();
+        StepVerifier.create(fluxUsersBo.log()).expectNextCount(2).verifyComplete();
+        StepVerifier.create(fluxUsersBo.log()).expectNext(userBo1).expectNext(userBo2).verifyComplete();
+        StepVerifier.create(fluxUsersBo.log()).expectNext(userBo1, userBo2).verifyComplete();
     }
     
     @Test
@@ -73,48 +75,48 @@ public class UserServiceImplTests {
         //Given:
         UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
-        UserDTO userDto = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserBO<Long> userBo = new UserBO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
-        when(modelMapper.map(user, UserDTO.class)).thenReturn(userDto);
+        when(modelMapper.map(ArgumentMatchers.any(UserDAO.class), ArgumentMatchers.any(Type.class))).thenReturn(userBo);
         when(mockUserRepository.findById(user.getId())).thenReturn(Mono.just(user));
         when(mockUserRepository.findById(2L)).thenReturn(Mono.empty());
         
-        Mono<UserDTO> monoUser = userService.findById(user.getId());
-        Mono<UserDTO> monoVoid = userService.findById(2L);
+        Mono<UserBO<Long>> monoUser = userService.findById(user.getId());
+        Mono<UserBO<Long>> monoVoid = userService.findById(2L);
 
         //Then:
-        StepVerifier.create(monoUser.log()).expectNext(userDto).verifyComplete();
+        StepVerifier.create(monoUser.log()).expectNext(userBo).verifyComplete();
         StepVerifier.create(monoVoid.log()).verifyComplete();
     }
     
     @Test
     public void saveTest() {
         //Given:
-        UserDTO userDto = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserBO<Long> userBo = new UserBO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> userDao = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
-        when(mockUserRepository.save(user)).thenReturn(Mono.just(user));
-        when(modelMapper.map(userDto, UserDAO.class)).thenReturn(user);
-        when(modelMapper.map(user, UserDTO.class)).thenReturn(userDto);
+        when(mockUserRepository.save(userDao)).thenReturn(Mono.just(userDao));
+        when(modelMapper.map(ArgumentMatchers.any(UserDAO.class), ArgumentMatchers.any(Type.class))).thenReturn(userBo);
+        when(modelMapper.map(ArgumentMatchers.any(UserBO.class), ArgumentMatchers.any(Type.class))).thenReturn(userDao);
         
         //Then:
-        Mono<UserDTO> monoUser = userService.save(userDto);
+        Mono<UserBO<Long>> monoUser = userService.save(userBo);
         
-        StepVerifier.create(monoUser.log()).expectNext(userDto).verifyComplete();
+        StepVerifier.create(monoUser.log()).expectNext(userBo).verifyComplete();
     }
     
     @Test
     public void deleteTest() {
         //Given:
         UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        UserDTO userDto = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserBO<Long> userBo = new UserBO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
-        when(modelMapper.map(userDto, UserDAO.class)).thenReturn(user);
+        when(modelMapper.map(ArgumentMatchers.any(UserBO.class), ArgumentMatchers.any(Type.class))).thenReturn(user);
         when(mockUserRepository.delete(user)).thenReturn(Mono.empty());
-        Mono<Void> monoUser = userService.delete(userDto);
+        Mono<Void> monoUser = userService.delete(userBo);
         
         //Then:
         StepVerifier.create(monoUser.log()).verifyComplete();

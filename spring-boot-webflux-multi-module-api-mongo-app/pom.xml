@@ -24,13 +24,21 @@
 		</dependency>
 		<!-- ./Implementación de accedo a datos para mongo -->
 		
-		<!-- simple-api -->
+		<!-- Implementación de la capa de negocio -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-service-impl</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./Implementación de la capa de negocio -->
+		
+		<!-- commons -->
 		<dependency>
 			<groupId>com.omblanco.springboot.webflux.api</groupId>
 			<artifactId>spring-boot-webflux-multi-module-api-commons</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		<!-- ./simple-api -->
+		<!-- ./commons -->
 		
 		<!-- Devtools -->
 		<dependency>

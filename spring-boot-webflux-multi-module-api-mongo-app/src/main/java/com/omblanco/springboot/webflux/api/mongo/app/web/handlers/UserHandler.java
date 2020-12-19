@@ -7,8 +7,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 
 import java.net.URI;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -20,8 +23,10 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import com.omblanco.springboot.webflux.api.commons.annotation.loggable.Loggable;
 import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
 import com.omblanco.springboot.webflux.api.commons.web.handler.CommonHandler;
-import com.omblanco.springboot.webflux.api.mongo.app.services.UserService;
 import com.omblanco.springboot.webflux.api.mongo.app.web.dtos.UserDTO;
+import com.omblanco.springboot.webflux.api.service.user.UserBO;
+import com.omblanco.springboot.webflux.api.service.user.UserFilterBO;
+import com.omblanco.springboot.webflux.api.service.user.UserService;
 
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -43,9 +48,11 @@ public class UserHandler extends CommonHandler {
     
     private static final String VALIDATION_MESSAGE = "Validation failure: userDTO";
     
-    private UserService userService;
+    private UserService<String> userService;
     
     private Validator validator;
+    
+    private ModelMapper modelMapper;
     
     public Mono<ServerResponse> findAll(ServerRequest request) {
         
@@ -62,11 +69,14 @@ public class UserHandler extends CommonHandler {
             
             return ServerResponse.ok()
                     .contentType(APPLICATION_JSON)
-                    .body(userService.findByFilter(filter, pageable), Page.class);
+                    .body(userService.findByFilter(convertFilterToDao(filter), pageable)
+                            .map(this::convertPageToBo), Page.class);
         } else {
             return ServerResponse.ok()
                     .contentType(APPLICATION_JSON)
-                    .body(userService.findAll(), UserDTO.class);
+                        .body(userService.findAll()
+                                .map(this::convertToDto)
+                                .collect(Collectors.toList()), UserDTO.class);
         }
     }
     
@@ -81,10 +91,9 @@ public class UserHandler extends CommonHandler {
         String id = request.pathVariable(ID_PARAM_NAME);
         
         return userService.findById(id)
-                .flatMap(p -> ServerResponse
-                        .ok()
-                        .contentType(APPLICATION_JSON)
-                        .body(fromValue(p)))
+                .map(this::convertToDto)
+                .flatMap(userDto -> ServerResponse.ok().contentType(APPLICATION_JSON)
+                .body(fromValue(userDto)))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
     
@@ -100,10 +109,12 @@ public class UserHandler extends CommonHandler {
                 return validationErrorsResponse(errors, VALIDATION_MESSAGE);
             } else {
                 userDto.setId(null);
-                return userService.save(userDto).flatMap(userDB -> 
-                    ServerResponse.created(URI.create(USER_BASE_URL_V3.concat(FORWARD_SLASH).concat(userDB.getId())))
-                    .contentType(APPLICATION_JSON)
-                    .body(fromValue(userDB)));
+                return userService.save(convertToBo(userDto))
+                        .map(this::convertToDto)
+                        .flatMap(savedUserDto -> 
+                        ServerResponse.created(URI.create(USER_BASE_URL_V3.concat(FORWARD_SLASH).concat(savedUserDto.getId().toString())))
+                            .contentType(APPLICATION_JSON)
+                            .body(fromValue(savedUserDto)));
             }
         });
     }
@@ -119,21 +130,21 @@ public class UserHandler extends CommonHandler {
             if(errors.hasErrors()) {
                 return validationErrorsResponse(errors, VALIDATION_MESSAGE);
             } else {
-                Mono<UserDTO> userMonoDB = userService.findById(id);
-                return userMonoDB.map(db -> {
-                    db.setName(userDto.getName());
-                    db.setSurname(userDto.getSurname());
-                    db.setEmail(userDto.getEmail());
-                    db.setBirthdate(userDto.getBirthdate());
+                return userService.findById(id).map(userBo -> {
                     
-                    return db;
-                }).flatMap(user -> {
-                    return userService.save(user).flatMap(updatedUser -> 
+                    userBo.setName(userDto.getName());
+                    userBo.setSurname(userDto.getSurname());
+                    userBo.setEmail(userDto.getEmail());
+                    userBo.setBirthdate(userDto.getBirthdate());
                     
-                    ServerResponse.created(URI.create(USER_BASE_URL_V3.concat(FORWARD_SLASH).concat(updatedUser.getId())))
-                        .contentType(APPLICATION_JSON)
-                        .body(fromValue(updatedUser)));
-                });
+                    return userBo; 
+                })
+                .flatMap(userBo -> userService.save(userBo)
+                        .map(this::convertToDto)
+                        .flatMap(updatedUserDto -> 
+                            ServerResponse.created(URI.create(USER_BASE_URL_V3.concat(FORWARD_SLASH).concat(updatedUserDto.getId().toString())))
+                                .contentType(APPLICATION_JSON)
+                                .body(fromValue(updatedUserDto))));
             }
         });
     }
@@ -141,11 +152,38 @@ public class UserHandler extends CommonHandler {
     public Mono<ServerResponse> delete(ServerRequest request) {
         
         String id = request.pathVariable(ID_PARAM_NAME);
-        Mono<UserDTO> userDB = userService.findById(id);
         
-        return userDB.flatMap(p -> userService.delete(p)
-                .then(ServerResponse.noContent().build()))
-                .switchIfEmpty(ServerResponse.notFound().build());
+        return userService.findById(id)
+                .flatMap(userBo -> userService.delete(userBo)
+                .then(ServerResponse.noContent().build())
+                .switchIfEmpty(ServerResponse.notFound().build()));
     }
-}    
+    
+    /**
+     * Transforma un filtro dto en un filtro bo
+     * @param dto Filtro de la capa de vista
+     * @return Filtro de la capa de negocio
+     */
+    private UserFilterBO convertFilterToDao(UserFilterDTO dto) {
+        return modelMapper.map(dto, UserFilterBO.class);
+    }
+    
+    protected UserDTO convertToDto(UserBO<String> bo) {
+        return modelMapper.map(bo, UserDTO.class);
+    }
+
+    protected Page<UserDTO> convertPageToBo(Page<UserBO<String>> boPage) {
+        return new PageImpl<UserDTO>(boPage.getContent().stream().map(user -> {
+            return this.convertToDto(user);
+        }).collect(Collectors.toList()), boPage.getPageable(), boPage.getTotalElements());
+    }
+
+    protected UserBO<String> convertToBo(UserDTO dto) {
+        UserBO<String> result = new UserBO<String>();
+        modelMapper.map(dto, result);
+        result.setId(dto.getId());
+        
+        return result;
+    }
+}
 

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,6 @@ import com.omblanco.springboot.webflux.api.model.repository.user.UserRepository;
 import lombok.Builder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import java.lang.reflect.Type;
 
 /**
  * Implementación del repositorio extendido para recuperar los usuarios paginados y ordenados
@@ -101,8 +99,11 @@ public class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<String>, Us
 
     @Override
     protected UserDAO<String> convertToDao(User model) {
-        Type userType = new TypeToken<UserDAO<String>>() {}.getType();
-        return modelMapper.map(model, userType);
+        UserDAO<String> result = new UserDAO<String>();
+        modelMapper.map(model, result);
+        result.setId(model.getId());
+        
+        return result;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.omblanco.springboot.webflux.api.mongo.app.configuration;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 
 /**
  * Clase de configuración para habilitar los repositorios de mongo
@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  *
  */
 @Configuration
-@EnableMongoRepositories(basePackages = {"com.omblanco.springboot.webflux.api.model"})
+@EnableReactiveMongoRepositories(basePackages = {"com.omblanco.springboot.webflux.api.model"})
 public class MongoRepositoriesConfig {
 
 }

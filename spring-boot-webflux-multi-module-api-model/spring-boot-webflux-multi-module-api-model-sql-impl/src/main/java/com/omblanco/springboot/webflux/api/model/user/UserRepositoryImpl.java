@@ -56,7 +56,6 @@ class UserRepositoryImpl extends CommonRepositoryImpl<UserDAO<Long>, User, Long,
         
         UserDAO<Long> result = new UserDAO<Long>();
         modelMapper.map(model, result);
-        //TODO: id no funciona
         result.setId(model.getId());
         
         return result;

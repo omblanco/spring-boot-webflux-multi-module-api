@@ -19,9 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.omblanco.springboot.webflux.api.app.services.UserService;
-import com.omblanco.springboot.webflux.api.commons.utils.BaseApiConstants;
 import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
+import com.omblanco.springboot.webflux.api.commons.utils.BaseApiConstants;
+import com.omblanco.springboot.webflux.api.service.user.UserBO;
+import com.omblanco.springboot.webflux.api.service.user.UserService;
 
 import reactor.core.publisher.Mono;
 
@@ -41,7 +42,7 @@ public class UserControllerTests {
     private WebTestClient client;
     
     @Autowired
-    private UserService userService;
+    private UserService<Long> userService;
     
     @ParameterizedTest
     @ValueSource(strings = {USER_BASE_URL_V1, USER_BASE_URL_V2, USER_BASE_URL_V3})
@@ -92,7 +93,7 @@ public class UserControllerTests {
     @ParameterizedTest
     @ValueSource(strings = {USER_BASE_URL_V1, USER_BASE_URL_V2, USER_BASE_URL_V3})
     public void getByidTest(String path) {
-        UserDTO user = userService.findAll().blockFirst();
+        UserBO<Long> user = userService.findAll().blockFirst();
         
         client.get()
         .uri(path.concat("/{id}"), Collections.singletonMap("id", user.getId()))
@@ -164,7 +165,7 @@ public class UserControllerTests {
     @ParameterizedTest
     @ValueSource(strings = {USER_BASE_URL_V1, USER_BASE_URL_V2, USER_BASE_URL_V3})
     public void putTest(String path) {
-        UserDTO user = userService.findAll().blockFirst();
+        UserBO<Long> user = userService.findAll().blockFirst();
         
         user.setEmail("email@mail.com");
         user.setName("Name");
@@ -194,7 +195,7 @@ public class UserControllerTests {
     @ParameterizedTest
     @ValueSource(strings = {USER_BASE_URL_V1, USER_BASE_URL_V2, USER_BASE_URL_V3})
     public void deleteTest(String path) {
-        UserDTO user = userService.findAll().blockFirst();
+        UserBO<Long> user = userService.findAll().blockFirst();
         client.delete()
             .uri(path.concat("/{id}"), Collections.singletonMap("id", user.getId()))
             .exchange()

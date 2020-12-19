@@ -63,15 +63,15 @@ public class MongoInitialDataConfig {
     }    
     
     @Bean
-    public ApplicationRunner loadInitalData(UserRepository userRepository) {
+    public ApplicationRunner loadInitalData(UserRepository<String> userRepository) {
         return applicationRunner -> {
             // Limpiamos si hay usuarios
             userRepository.deleteAll().subscribe();
             
-            UserDAO user1 = new UserDAO(null, "John", "Doe", "john@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
-            UserDAO user2 = new UserDAO(null, "Oscar", "Suarez", "oscar@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
-            UserDAO user3 = new UserDAO(null, "Maria", "Salgado", "salgado@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
-            UserDAO user4 = new UserDAO(null, "Manuel", "Lopez", "manuel@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
+            UserDAO<String> user1 = new UserDAO<String>(null, "John", "Doe", "john@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
+            UserDAO<String> user2 = new UserDAO<String>(null, "Oscar", "Suarez", "oscar@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
+            UserDAO<String> user3 = new UserDAO<String>(null, "Maria", "Salgado", "salgado@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
+            UserDAO<String> user4 = new UserDAO<String>(null, "Manuel", "Lopez", "manuel@mail.com", new Date(), "$2a$10$vUE9JNc3ZflWL6u4HFH2kOEHWgNIahyAxoUoaZ1g0rsHJ3y9kzhwy");
             
             Flux.just(user1, user2, user3, user4)
                 .flatMap(userRepository::save)

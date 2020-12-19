@@ -7,35 +7,39 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
+import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.omblanco.springboot.webflux.api.app.configuration.ModelMapperConfig;
 import com.omblanco.springboot.webflux.api.app.configuration.SecurityConfig;
 import com.omblanco.springboot.webflux.api.app.configuration.SecurityWebFilterChainConfig;
-import com.omblanco.springboot.webflux.api.app.services.UserServiceImpl;
 import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
+import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
 import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
 import com.omblanco.springboot.webflux.api.model.entity.user.UserFilterDAO;
 import com.omblanco.springboot.webflux.api.model.repository.user.UserRepository;
+import com.omblanco.springboot.webflux.api.service.user.UserBO;
+import com.omblanco.springboot.webflux.api.service.user.UserFilterBO;
+import com.omblanco.springboot.webflux.api.service.user.UserServiceImpl;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -57,6 +61,12 @@ public class UserControllerUnitTest {
     @MockBean
     private BCryptPasswordEncoder passwordEncoder;
     
+    @MockBean
+    private ModelMapper modelMapper;
+    
+    @MockBean
+    private SharedEntityManagerCreator entityManagerFactory;
+    
     @Autowired
     WebTestClient webTestClient;
     
@@ -67,27 +77,35 @@ public class UserControllerUnitTest {
         UserDAO<Long> user1 = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         UserDAO<Long> user2 = new UserDAO<Long>(1L, "Mary", "Queen", "mary@mail.com", new Date(), "1234");
         
+        UserBO<Long> userBo1 = new UserBO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserBO<Long> userBo2 = new UserBO<Long>(2L, "Mary", "Queen", "mary@mail.com", new Date(), "1234");
+        
+        UserDTO userDTO1 = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDTO userDTO2 = new UserDTO(2L, "Mary", "Queen", "mary@mail.com", new Date(), "1234");
+        
         //when:
+        when(modelMapper.map(ArgumentMatchers.any(UserDAO.class), ArgumentMatchers.any(Type.class))).thenReturn(userBo1, userBo2);
+        when(modelMapper.map(userBo1, UserDTO.class)).thenReturn(userDTO1);
+        when(modelMapper.map(userBo2, UserDTO.class)).thenReturn(userDTO2);
+        
         when(userRepository.findAll()).thenReturn(Flux.just(user1, user2));
-        webTestClient.get().uri(path)
+        webTestClient
+            .get().uri(path)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(UserDTO.class)
             .consumeWith(response -> {
                 List<UserDTO> users = response.getResponseBody();
-                users.forEach(user -> {
-                    System.out.println(user);
-                });
                 
                 //then:
                 assertThat(users.size() == 2).isTrue();
-                assertThat(user1.getId()).isEqualTo(users.get(0).getId());
-                assertThat(user1.getName()).isEqualTo(users.get(0).getName());
-                assertThat(user1.getSurname()).isEqualTo(users.get(0).getSurname());
-                assertThat(user2.getId()).isEqualTo(users.get(1).getId());
-                assertThat(user2.getName()).isEqualTo(users.get(1).getName());
-                assertThat(user2.getSurname()).isEqualTo(users.get(1).getSurname());
+                assertThat(userDTO1.getId()).isEqualTo(users.get(0).getId());
+                assertThat(userDTO1.getName()).isEqualTo(users.get(0).getName());
+                assertThat(userDTO1.getSurname()).isEqualTo(users.get(0).getSurname());
+                assertThat(userDTO2.getId()).isEqualTo(users.get(1).getId());
+                assertThat(userDTO2.getName()).isEqualTo(users.get(1).getName());
+                assertThat(userDTO2.getSurname()).isEqualTo(users.get(1).getSurname());
             });
         
         //then:
@@ -96,20 +114,26 @@ public class UserControllerUnitTest {
     
     @ParameterizedTest
     @ValueSource(strings = {USER_BASE_URL_V1, USER_BASE_URL_V2})
-    @SuppressWarnings("unchecked")
     public void findFyFilterTest(String path) {
         //given
-        UserDAO<Long> user = new UserDAO<Long>(1L, "Maria", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> userDao = new UserDAO<Long>(1L, "Maria", "Doe", "john@mail.com", new Date(), "1234");
+        UserBO<Long> userBo = new UserBO<Long>(1L, "Maria", "Doe", "john@mail.com", new Date(), "1234");
+        UserDTO userDto = new UserDTO(1L, "Maria", "Doe", "john@mail.com", new Date(), "1234");
         
         String name = "Maria";
         Integer page = 0;
         Integer size = 10;
         
-        Page<UserDAO<Long>> pageUsers = new PageImpl<UserDAO<Long>>(Arrays.asList(user));
+        Page<UserDAO<Long>> pageUsers = new PageImpl<UserDAO<Long>>(Arrays.asList(userDao));
         
         //when
         when(userRepository.findAll(ArgumentMatchers.any(UserFilterDAO.class), ArgumentMatchers.any()))
             .thenReturn(Mono.just(pageUsers));
+        when(modelMapper.map(ArgumentMatchers.any(UserDAO.class), ArgumentMatchers.any(Type.class))).thenReturn(userBo);
+        when(modelMapper.map(userBo, UserDTO.class)).thenReturn(userDto);
+        when(modelMapper.map(ArgumentMatchers.any(UserFilterDTO.class), ArgumentMatchers.any())).thenReturn(new UserFilterBO());
+        when(modelMapper.map(ArgumentMatchers.any(UserFilterBO.class), ArgumentMatchers.any())).thenReturn(new UserFilterDAO());
+        
         webTestClient.get().uri(uriBuilder ->
             uriBuilder
             .path(path)
@@ -137,14 +161,18 @@ public class UserControllerUnitTest {
     @ValueSource(strings = {USER_BASE_URL_V1, USER_BASE_URL_V2})
     public void getByidTest(String path) {
         //given:
-        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> userDao = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserBO<Long> userBo = new UserBO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDTO userDto = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
-        when(userRepository.findById(user.getId())).thenReturn(Mono.just(user));
+        when(modelMapper.map(ArgumentMatchers.any(UserDAO.class), ArgumentMatchers.any(Type.class))).thenReturn(userBo);
+        when(modelMapper.map(userBo, UserDTO.class)).thenReturn(userDto);
+        when(userRepository.findById(userDao.getId())).thenReturn(Mono.just(userDao));
         
         //then:
         webTestClient.get()
-        .uri(path.concat("/{id}"), Collections.singletonMap("id", user.getId()))
+        .uri(path.concat("/{id}"), Collections.singletonMap("id", userDao.getId()))
         .accept(MediaType.APPLICATION_JSON)
         .exchange()
         .expectStatus().isOk()
@@ -156,15 +184,15 @@ public class UserControllerUnitTest {
             UserDTO userResponse = response.getResponseBody();
             assertThat(userResponse.getId()).isNotNull();
             assertThat(userResponse.getId() > 0).isTrue();
-            assertThat(userResponse.getId()).isEqualTo(user.getId());
-            assertThat(userResponse.getBirthdate()).isEqualTo(user.getBirthdate());
-            assertThat(userResponse.getEmail()).isEqualTo(user.getEmail());
-            assertThat(userResponse.getName()).isEqualTo(user.getName());
-            assertThat(userResponse.getSurname()).isEqualTo(user.getSurname());
+            assertThat(userResponse.getId()).isEqualTo(userDto.getId());
+            assertThat(userResponse.getBirthdate()).isEqualTo(userDto.getBirthdate());
+            assertThat(userResponse.getEmail()).isEqualTo(userDto.getEmail());
+            assertThat(userResponse.getName()).isEqualTo(userDto.getName());
+            assertThat(userResponse.getSurname()).isEqualTo(userDto.getSurname());
         });
         
         //then:
-        verify(userRepository, times(1)).findById(user.getId());
+        verify(userRepository, times(1)).findById(userDao.getId());
     }
     
     
@@ -173,10 +201,17 @@ public class UserControllerUnitTest {
     public void postTest(String path) {
         //given:
         UserDTO userDtoRequest = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> userDao = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserBO<Long> userBo = new UserBO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when
-        when(userRepository.save(ArgumentMatchers.any(UserDAO.class))).thenReturn(Mono.just(user));
+        when(modelMapper.map(ArgumentMatchers.any(UserDTO.class), ArgumentMatchers.any(Type.class))).thenReturn(userBo);
+        when(modelMapper.map(ArgumentMatchers.any(UserBO.class), ArgumentMatchers.any(Type.class))).thenReturn(userDao);
+        
+        when(modelMapper.map(userBo, UserDTO.class)).thenReturn(userDtoRequest);
+        when(modelMapper.map(ArgumentMatchers.any(UserDAO.class), ArgumentMatchers.any(Type.class))).thenReturn(userBo);
+        
+        when(userRepository.save(ArgumentMatchers.any(UserDAO.class))).thenReturn(Mono.just(userDao));
         when(passwordEncoder.encode(userDtoRequest.getPassword())).thenReturn("encodePassword");
         webTestClient.post()
         .uri(path)
@@ -192,10 +227,10 @@ public class UserControllerUnitTest {
             UserDTO userResponse = response.getResponseBody();
             Assertions.assertThat(userResponse.getId()).isNotNull();
             Assertions.assertThat(userResponse.getId() > 0).isTrue();
-            Assertions.assertThat(userResponse.getBirthdate()).isEqualTo(user.getBirthdate());
-            Assertions.assertThat(userResponse.getEmail()).isEqualTo(user.getEmail());
-            Assertions.assertThat(userResponse.getName()).isEqualTo(user.getName());
-            Assertions.assertThat(userResponse.getSurname()).isEqualTo(user.getSurname());
+            Assertions.assertThat(userResponse.getBirthdate()).isEqualTo(userDao.getBirthdate());
+            Assertions.assertThat(userResponse.getEmail()).isEqualTo(userDao.getEmail());
+            Assertions.assertThat(userResponse.getName()).isEqualTo(userDao.getName());
+            Assertions.assertThat(userResponse.getSurname()).isEqualTo(userDao.getSurname());
         });
         
         //then:
@@ -207,15 +242,22 @@ public class UserControllerUnitTest {
     public void putTest(String path) {
         //given:
         UserDTO userDtoRequest = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
-        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> userDao = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserBO<Long> userBo = new UserBO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
-        when(userRepository.findById(user.getId())).thenReturn(Mono.just(user));
-        when(userRepository.save(ArgumentMatchers.any(UserDAO.class))).thenReturn(Mono.just(user));
-        when(passwordEncoder.encode(user.getPassword())).thenReturn("encodePassword");
+        when(modelMapper.map(ArgumentMatchers.any(UserDTO.class), ArgumentMatchers.any(Type.class))).thenReturn(userBo);
+        when(modelMapper.map(ArgumentMatchers.any(UserBO.class), ArgumentMatchers.any(Type.class))).thenReturn(userDao);
+        
+        when(modelMapper.map(userBo, UserDTO.class)).thenReturn(userDtoRequest);
+        when(modelMapper.map(ArgumentMatchers.any(UserDAO.class), ArgumentMatchers.any(Type.class))).thenReturn(userBo);
+        
+        when(userRepository.findById(userDao.getId())).thenReturn(Mono.just(userDao));
+        when(userRepository.save(ArgumentMatchers.any(UserDAO.class))).thenReturn(Mono.just(userDao));
+        when(passwordEncoder.encode(userDao.getPassword())).thenReturn("encodePassword");
        
         webTestClient.put()
-        .uri(path.concat("/{id}"), Collections.singletonMap("id", user.getId()))
+        .uri(path.concat("/{id}"), Collections.singletonMap("id", userDao.getId()))
         .accept(MediaType.APPLICATION_JSON)
         .body(Mono.just(userDtoRequest), UserDTO.class)
         .exchange()
@@ -227,16 +269,16 @@ public class UserControllerUnitTest {
             UserDTO userResponse = response.getResponseBody();
             Assertions.assertThat(userResponse.getId()).isNotNull();
             Assertions.assertThat(userResponse.getId() > 0).isTrue();
-            Assertions.assertThat(userResponse.getId()).isEqualTo(user.getId());
-            Assertions.assertThat(userResponse.getBirthdate()).isEqualTo(user.getBirthdate());
-            Assertions.assertThat(userResponse.getEmail()).isEqualTo(user.getEmail());
-            Assertions.assertThat(userResponse.getName()).isEqualTo(user.getName());
-            Assertions.assertThat(userResponse.getSurname()).isEqualTo(user.getSurname());
-            Assertions.assertThat(userResponse.getPassword()).isEqualTo(user.getPassword());
+            Assertions.assertThat(userResponse.getId()).isEqualTo(userDao.getId());
+            Assertions.assertThat(userResponse.getBirthdate()).isEqualTo(userDao.getBirthdate());
+            Assertions.assertThat(userResponse.getEmail()).isEqualTo(userDao.getEmail());
+            Assertions.assertThat(userResponse.getName()).isEqualTo(userDao.getName());
+            Assertions.assertThat(userResponse.getSurname()).isEqualTo(userDao.getSurname());
+            Assertions.assertThat(userResponse.getPassword()).isEqualTo(userDao.getPassword());
         });
         
         //then:
-        verify(userRepository, times(1)).findById(user.getId());
+        verify(userRepository, times(1)).findById(userDao.getId());
         verify(userRepository, times(1)).save(ArgumentMatchers.any(UserDAO.class));
     }
     
@@ -244,18 +286,22 @@ public class UserControllerUnitTest {
     @ValueSource(strings = {USER_BASE_URL_V1, USER_BASE_URL_V2})
     public void deleteTest(String path) {
         //given:
-        UserDAO<Long> user = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDAO<Long> userDao = new UserDAO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserDTO userDtoRequest = new UserDTO(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
+        UserBO<Long> userBo = new UserBO<Long>(1L, "John", "Doe", "john@mail.com", new Date(), "1234");
         
         //when:
-        when(userRepository.findById(user.getId())).thenReturn(Mono.just(user));
-        when(userRepository.save(user)).thenReturn(Mono.just(user));
+        when(modelMapper.map(ArgumentMatchers.any(UserDAO.class), ArgumentMatchers.any(Type.class))).thenReturn(userBo);
+        when(modelMapper.map(ArgumentMatchers.any(UserBO.class), ArgumentMatchers.any(Type.class))).thenReturn(userDao);
+        when(userRepository.findById(userDao.getId())).thenReturn(Mono.just(userDao));
+        when(userRepository.delete(userDao)).thenReturn(Mono.empty());
         webTestClient.delete()
-            .uri(path.concat("/{id}"), Collections.singletonMap("id", user.getId()))
+            .uri(path.concat("/{id}"), Collections.singletonMap("id", userDtoRequest.getId()))
             .exchange()
             .expectStatus().isNoContent()
             .expectBody().isEmpty();
         
         //then:
-        verify(userRepository, times(1)).delete(user);
+        verify(userRepository, times(1)).delete(userDao);
     }
 }
