@@ -11,7 +11,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -29,8 +28,7 @@ public class LoggingAspect {
     private static final String LOG_EXIT_PATTERN = "Request uuid: {} -> Exit: {}.{}() with result = {}";
     private static final String LOG_ERROR_ARROUND_PATTERN = "Request uuid: {} -> Illegal argument: {} in {}.{}()";
     
-    private static final String LOG_ERROR_PATTERN = "Error in {}.{}()";
-    private static final String LOG_ERROR_JDBC_PATTERN = "Error in {}.{}.{}.{}()";
+    private static final String LOG_ERROR_PATTERN = "Error in {}.{}.{}()";
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingAspect.class);
 
     /**
@@ -44,13 +42,7 @@ public class LoggingAspect {
         String typeName = joinPoint.getSignature().getDeclaringTypeName();
         String methodName = joinPoint.getSignature().getName();
         String msg = e.getMessage();
-
-        if (e instanceof DataAccessException) {
-            int errorCode = 0;
-            LOGGER.error(LOG_ERROR_JDBC_PATTERN, typeName, methodName, errorCode, msg, e);
-        } else {
-            LOGGER.error(LOG_ERROR_PATTERN, typeName, methodName, e);
-        }
+        LOGGER.error(LOG_ERROR_PATTERN, typeName, methodName, msg, e);
     }
 
     /**

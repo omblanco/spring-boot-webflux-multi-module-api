@@ -27,6 +27,7 @@
 	</properties>
 
 	<modules>
+		<module>spring-boot-webflux-multi-module-api-aop</module>
 		<module>spring-boot-webflux-multi-module-api-model</module>
 		<module>spring-boot-webflux-multi-module-api-service</module>
 		<module>spring-boot-webflux-multi-module-api-commons</module>

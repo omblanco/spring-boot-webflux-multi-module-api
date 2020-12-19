@@ -9,10 +9,20 @@
 		<version>1.0.0</version>
 	</parent>
 
-	<artifactId>spring-boot-webflux-multi-module-api-security</artifactId>
-	<name>spring-boot-webflux-multi-module-api-security</name>
+	<artifactId>spring-boot-webflux-multi-module-api-aop</artifactId>
+	<name>spring-boot-webflux-multi-module-api-aop</name>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+		</dependency>
+		
 		<!-- Log slf4j -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -25,23 +35,11 @@
 			<artifactId>reactor-core</artifactId>
 		</dependency>
 		
-		<!-- Spring Security -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-		</dependency>
-		
 		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-		</dependency>
-		
-		<!-- jwt -->
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
 		</dependency>
 	</dependencies>
 </project>

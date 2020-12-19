@@ -40,6 +40,14 @@
 		</dependency>
 		<!-- ./Security -->
 		
+		<!-- aop -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-aop</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./aop -->
+		
 		<!-- commons -->
 		<dependency>
 			<groupId>com.omblanco.springboot.webflux.api</groupId>
@@ -62,6 +70,7 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		
+		<!-- Aop -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>

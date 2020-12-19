@@ -13,12 +13,6 @@
 	<name>spring-boot-webflux-multi-module-api-commons</name>
 
 	<dependencies>
-		<!-- Interface del acceso a datos -->
-		<dependency>
-			<groupId>com.omblanco.springboot.webflux.api</groupId>
-			<artifactId>spring-boot-webflux-multi-module-api-model-interface</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 		
 		<!-- Interface del negocio -->
 		<dependency>
@@ -39,25 +33,9 @@
 			<artifactId>spring-web</artifactId>
 		</dependency>
 		
-		<!-- Spring Data -->
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-mongodb</artifactId>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webflux</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
 		</dependency>
 		
 		<dependency>
@@ -82,12 +60,6 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-		</dependency>
-		
-		<!-- jwt -->
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
 		</dependency>
 		
 		<!-- Runtime, com.sun.xml.bind module -->

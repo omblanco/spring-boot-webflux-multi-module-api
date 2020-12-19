@@ -21,12 +21,21 @@
 			<version>1.0.0</version>
 		</dependency>
 		
-		<!-- Para las anotaciones aop -->
+		<!-- aop -->
 		<dependency>
 			<groupId>com.omblanco.springboot.webflux.api</groupId>
-			<artifactId>spring-boot-webflux-multi-module-api-commons</artifactId>
+			<artifactId>spring-boot-webflux-multi-module-api-aop</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<!-- ./aop -->
+		
+		<!-- Security -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-security</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./Security -->
 
 		<!-- Reactor -->
 		<dependency>
