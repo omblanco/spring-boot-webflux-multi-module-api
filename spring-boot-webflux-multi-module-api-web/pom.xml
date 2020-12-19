@@ -9,8 +9,8 @@
 		<version>1.0.0</version>
 	</parent>
 
-	<artifactId>spring-boot-webflux-multi-module-api-commons</artifactId>
-	<name>spring-boot-webflux-multi-module-api-commons</name>
+	<artifactId>spring-boot-webflux-multi-module-api-web</artifactId>
+	<name>spring-boot-webflux-multi-module-api-web</name>
 
 	<dependencies>
 		
@@ -20,6 +20,14 @@
 			<artifactId>spring-boot-webflux-multi-module-api-service-interface</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		
+		<!-- aop -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-aop</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./aop -->
 
 		<!-- Reactor -->
 		<dependency>

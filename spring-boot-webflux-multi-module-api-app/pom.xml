@@ -48,13 +48,13 @@
 		</dependency>
 		<!-- ./aop -->
 		
-		<!-- commons -->
+		<!-- web -->
 		<dependency>
 			<groupId>com.omblanco.springboot.webflux.api</groupId>
-			<artifactId>spring-boot-webflux-multi-module-api-commons</artifactId>
+			<artifactId>spring-boot-webflux-multi-module-api-web</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		<!-- ./commons -->
+		<!-- ./web -->
 
 		<!-- Devtools -->
 		<dependency>

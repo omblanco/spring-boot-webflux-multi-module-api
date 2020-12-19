@@ -1,4 +1,4 @@
-package com.omblanco.springboot.webflux.api.commons.web.dto;
+package com.omblanco.springboot.webflux.api.commons.web.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

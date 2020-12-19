@@ -1,8 +1,8 @@
 package com.omblanco.springboot.webflux.api.app;
 
-import static com.omblanco.springboot.webflux.api.commons.utils.BaseApiConstants.AUTH_URL_V1;
-import static com.omblanco.springboot.webflux.api.commons.utils.BaseApiConstants.ID_PARAM_URL;
-import static com.omblanco.springboot.webflux.api.commons.utils.BaseApiConstants.USER_BASE_URL_V3;
+import static com.omblanco.springboot.webflux.api.commons.web.utils.BaseApiConstants.AUTH_URL_V1;
+import static com.omblanco.springboot.webflux.api.commons.web.utils.BaseApiConstants.ID_PARAM_URL;
+import static com.omblanco.springboot.webflux.api.commons.web.utils.BaseApiConstants.USER_BASE_URL_V3;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.server.RequestPredicates.DELETE;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
@@ -25,8 +25,8 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
 import com.omblanco.springboot.webflux.api.app.web.handler.AuthHandler;
 import com.omblanco.springboot.webflux.api.app.web.handler.UserHandler;
-import com.omblanco.springboot.webflux.api.commons.web.dto.LoginRequestDTO;
-import com.omblanco.springboot.webflux.api.commons.web.dto.LoginResponseDTO;
+import com.omblanco.springboot.webflux.api.commons.web.dto.login.LoginRequestDTO;
+import com.omblanco.springboot.webflux.api.commons.web.dto.login.LoginResponseDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

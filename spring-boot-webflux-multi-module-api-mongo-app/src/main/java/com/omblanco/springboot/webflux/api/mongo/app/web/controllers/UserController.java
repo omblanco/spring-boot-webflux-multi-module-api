@@ -1,6 +1,6 @@
 package com.omblanco.springboot.webflux.api.mongo.app.web.controllers;
 
-import static com.omblanco.springboot.webflux.api.commons.utils.BaseApiConstants.USER_BASE_URL_V1;
+import static com.omblanco.springboot.webflux.api.commons.web.utils.BaseApiConstants.USER_BASE_URL_V1;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import java.util.stream.Collectors;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.omblanco.springboot.webflux.api.commons.web.controllers.CommonController;
-import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
+import com.omblanco.springboot.webflux.api.commons.web.dto.user.UserFilterDTO;
 import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
 import com.omblanco.springboot.webflux.api.mongo.app.web.dtos.UserDTO;
 import com.omblanco.springboot.webflux.api.service.user.UserBO;

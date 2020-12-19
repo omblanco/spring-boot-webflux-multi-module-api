@@ -1,7 +1,7 @@
 package com.omblanco.springboot.webflux.api.app.web.controllers;
 
-import static com.omblanco.springboot.webflux.api.commons.utils.BaseApiConstants.USER_BASE_URL_V1;
-import static com.omblanco.springboot.webflux.api.commons.utils.BaseApiConstants.USER_BASE_URL_V2;
+import static com.omblanco.springboot.webflux.api.commons.web.utils.BaseApiConstants.USER_BASE_URL_V1;
+import static com.omblanco.springboot.webflux.api.commons.web.utils.BaseApiConstants.USER_BASE_URL_V2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -33,7 +33,7 @@ import com.omblanco.springboot.webflux.api.app.configuration.ModelMapperConfig;
 import com.omblanco.springboot.webflux.api.app.configuration.SecurityConfig;
 import com.omblanco.springboot.webflux.api.app.configuration.SecurityWebFilterChainConfig;
 import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
-import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
+import com.omblanco.springboot.webflux.api.commons.web.dto.user.UserFilterDTO;
 import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
 import com.omblanco.springboot.webflux.api.model.entity.user.UserFilterDAO;
 import com.omblanco.springboot.webflux.api.model.repository.user.UserRepository;

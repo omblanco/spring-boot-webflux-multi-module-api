@@ -1,6 +1,6 @@
 package com.omblanco.springboot.webflux.api.app.web.controllers;
 
-import static com.omblanco.springboot.webflux.api.commons.utils.BaseApiConstants.USER_BASE_URL_V1;
+import static com.omblanco.springboot.webflux.api.commons.web.utils.BaseApiConstants.USER_BASE_URL_V1;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import java.lang.reflect.Type;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
 import com.omblanco.springboot.webflux.api.commons.web.controllers.CommonController;
-import com.omblanco.springboot.webflux.api.commons.web.dto.UserFilterDTO;
+import com.omblanco.springboot.webflux.api.commons.web.dto.user.UserFilterDTO;
 import com.omblanco.springboot.webflux.api.model.entity.user.UserDAO;
 import com.omblanco.springboot.webflux.api.service.user.UserBO;
 import com.omblanco.springboot.webflux.api.service.user.UserFilterBO;

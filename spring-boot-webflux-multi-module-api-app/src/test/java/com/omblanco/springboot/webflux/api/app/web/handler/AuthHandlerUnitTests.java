@@ -25,9 +25,9 @@ import com.omblanco.springboot.webflux.api.app.UserRouterFunctionConfig;
 import com.omblanco.springboot.webflux.api.app.configuration.SecurityConfig;
 import com.omblanco.springboot.webflux.api.app.configuration.SecurityWebFilterChainConfig;
 import com.omblanco.springboot.webflux.api.commons.security.TokenProvider;
-import com.omblanco.springboot.webflux.api.commons.utils.BaseApiConstants;
-import com.omblanco.springboot.webflux.api.commons.web.dto.LoginRequestDTO;
-import com.omblanco.springboot.webflux.api.commons.web.dto.LoginResponseDTO;
+import com.omblanco.springboot.webflux.api.commons.web.utils.BaseApiConstants;
+import com.omblanco.springboot.webflux.api.commons.web.dto.login.LoginRequestDTO;
+import com.omblanco.springboot.webflux.api.commons.web.dto.login.LoginResponseDTO;
 import com.omblanco.springboot.webflux.api.service.user.UserBO;
 import com.omblanco.springboot.webflux.api.service.user.UserService;
 
