@@ -32,6 +32,14 @@
 		</dependency>
 		<!-- ./Implementación de la capa de negocio -->
 		
+		<!-- Security -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-security</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./Security -->
+		
 		<!-- commons -->
 		<dependency>
 			<groupId>com.omblanco.springboot.webflux.api</groupId>

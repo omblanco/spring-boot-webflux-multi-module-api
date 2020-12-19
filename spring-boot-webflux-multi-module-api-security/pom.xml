@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.omblanco.springboot.webflux.api</groupId>
+		<artifactId>spring-boot-webflux-multi-module-api</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<artifactId>spring-boot-webflux-multi-module-api-security</artifactId>
+	<name>spring-boot-webflux-multi-module-api-security</name>
+
+	<dependencies>
+		<!-- Log slf4j -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		
+		<!-- Reactor -->
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-core</artifactId>
+		</dependency>
+		
+		<!-- Srping Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+		
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
+		<!-- jwt -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+		</dependency>
+		
+		<!-- jackson -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.fasterxml.jackson.core</groupId> -->
+<!-- 			<artifactId>jackson-databind</artifactId> -->
+<!-- 		</dependency> -->
+		
+		<!-- Runtime, com.sun.xml.bind module -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.glassfish.jaxb</groupId> -->
+<!-- 			<artifactId>jaxb-runtime</artifactId> -->
+<!-- 		</dependency> -->
+	</dependencies>
+</project>

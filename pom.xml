@@ -31,6 +31,7 @@
 		<module>spring-boot-webflux-multi-module-api-service</module>
 		<module>spring-boot-webflux-multi-module-api-commons</module>
 		<module>spring-boot-webflux-multi-module-api-client</module>
+		<module>spring-boot-webflux-multi-module-api-security</module>
 		<module>spring-boot-webflux-multi-module-api-app</module>
 		<module>spring-boot-webflux-multi-module-api-mongo-app</module>
 	</modules>
