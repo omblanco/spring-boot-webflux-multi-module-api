@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.ModelMapper;
@@ -39,6 +40,7 @@ import reactor.core.publisher.Mono;
  * @author oscar.martinezblanco
  *
  */
+@Disabled
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {UserRouterFunctionConfig.class, AuthHandler.class, UserHandler.class})
 @Import({SecurityConfig.class, SecurityWebFilterChainConfig.class})
