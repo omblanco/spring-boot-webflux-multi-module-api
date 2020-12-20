@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.4.0</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+
+	<groupId>com.omblanco.springboot.webflux.api</groupId>
+	<artifactId>spring-boot-webflux-multi-module-api</artifactId>
+	<version>1.0.0</version>
+	<name>spring-boot-webflux-multi-module-api</name>
+	<description>Aplicación básica para una api rest con WebFlux</description>
+	<packaging>pom</packaging>
+
+	<properties>
+		<java.version>11</java.version>
+		<jjwt.version>0.9.1</jjwt.version>
+		<modelmapper.version>2.3.8</modelmapper.version>
+		<springfox.version>3.0.0</springfox.version>
+		<springdoc-openapi-webflux-ui.version>1.5.0</springdoc-openapi-webflux-ui.version>
+	</properties>
+
+	<modules>
+		<module>spring-boot-webflux-multi-module-api-aop</module>
+		<module>spring-boot-webflux-multi-module-api-model</module>
+		<module>spring-boot-webflux-multi-module-api-service</module>
+		<module>spring-boot-webflux-multi-module-api-client</module>
+		<module>spring-boot-webflux-multi-module-api-security</module>
+		<module>spring-boot-webflux-multi-module-api-web</module>
+		<module>spring-boot-webflux-multi-module-api-app</module>
+		<module>spring-boot-webflux-multi-module-api-mongo-app</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- jwt -->
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt</artifactId>
+				<version>${jjwt.version}</version>
+			</dependency>
+
+			<!-- Modelmapper -->
+			<dependency>
+				<groupId>org.modelmapper</groupId>
+				<artifactId>modelmapper</artifactId>
+				<version>${modelmapper.version}</version>
+			</dependency>
+
+			<!-- swagger -->
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-boot-starter</artifactId>
+				<version>${springfox.version}</version>
+			</dependency>
+			<!-- ./swagger -->
+			
+			<!-- springdoc ui -->
+			<dependency>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-webflux-ui</artifactId>
+				<version>${springdoc-openapi-webflux-ui.version}</version>
+			</dependency>
+			
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

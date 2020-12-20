@@ -1,0 +1,101 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.omblanco.springboot.webflux.api</groupId>
+		<artifactId>spring-boot-webflux-multi-module-api</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<artifactId>spring-boot-webflux-multi-module-api-web</artifactId>
+	<name>spring-boot-webflux-multi-module-api-web</name>
+
+	<dependencies>
+	
+		<!-- Interface del modelo -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-model-interface</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./Interface del modelo -->	
+		
+		<!-- Interface del negocio -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-service-interface</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		
+		<!-- aop -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-aop</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./aop -->
+		
+		<!-- security -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-security</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./security -->
+
+		<!-- Reactor -->
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-core</artifactId>
+		</dependency>
+		
+		<!-- Srping Web -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webflux</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+		
+		<!-- validator -->
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+
+		<!-- jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
+		<!-- Modelmapper -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+		</dependency>
+		
+		<!-- Runtime, com.sun.xml.bind module -->
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+		</dependency>
+	</dependencies>
+</project>
