@@ -13,6 +13,14 @@
 	<name>spring-boot-webflux-multi-module-api-web</name>
 
 	<dependencies>
+	
+		<!-- Interface del modelo -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-model-interface</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./Interface del modelo -->	
 		
 		<!-- Interface del negocio -->
 		<dependency>
@@ -28,6 +36,14 @@
 			<version>1.0.0</version>
 		</dependency>
 		<!-- ./aop -->
+		
+		<!-- security -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-security</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- ./security -->
 
 		<!-- Reactor -->
 		<dependency>
@@ -68,6 +84,12 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+		
+		<!-- Modelmapper -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
 		</dependency>
 		
 		<!-- Runtime, com.sun.xml.bind module -->

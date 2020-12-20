@@ -22,7 +22,6 @@ import com.omblanco.springboot.webflux.api.commons.annotation.loggable.Loggable;
 import com.omblanco.springboot.webflux.api.commons.web.dto.CommonDTO;
 import com.omblanco.springboot.webflux.api.service.CommonService;
 
-import lombok.AllArgsConstructor;
 import reactor.core.CorePublisher;
 import reactor.core.publisher.Mono;
 
@@ -37,7 +36,6 @@ import reactor.core.publisher.Mono;
  * @param <K>
  */
 @Loggable
-@AllArgsConstructor
 public abstract class CommonController <DTO extends CommonDTO<ID>, BO, DAO, S extends CommonService<BO, DAO, ID>, ID> {
 
     protected static final String ID_PARAM_URL = "/{id}";
@@ -45,6 +43,10 @@ public abstract class CommonController <DTO extends CommonDTO<ID>, BO, DAO, S ex
     protected static final String FORWARD_SLASH = "/";
     
     protected S service;
+    
+    public CommonController(S service) {
+        this.service = service;
+    }
     
     /**
      * Recupera una lista de dtos

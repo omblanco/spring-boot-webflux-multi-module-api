@@ -23,10 +23,10 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.omblanco.springboot.webflux.api.app.web.dto.UserDTO;
-import com.omblanco.springboot.webflux.api.app.web.handler.AuthHandler;
 import com.omblanco.springboot.webflux.api.app.web.handler.UserHandler;
 import com.omblanco.springboot.webflux.api.commons.web.dto.login.LoginRequestDTO;
 import com.omblanco.springboot.webflux.api.commons.web.dto.login.LoginResponseDTO;
+import com.omblanco.springboot.webflux.api.commons.web.handler.login.AuthHandler;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

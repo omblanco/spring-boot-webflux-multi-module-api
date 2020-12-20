@@ -24,8 +24,8 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.omblanco.springboot.webflux.api.commons.web.dto.login.LoginRequestDTO;
 import com.omblanco.springboot.webflux.api.commons.web.dto.login.LoginResponseDTO;
+import com.omblanco.springboot.webflux.api.commons.web.handler.login.AuthHandler;
 import com.omblanco.springboot.webflux.api.mongo.app.web.dtos.UserDTO;
-import com.omblanco.springboot.webflux.api.mongo.app.web.handlers.AuthHandler;
 import com.omblanco.springboot.webflux.api.mongo.app.web.handlers.UserHandler;
 
 import io.swagger.v3.oas.annotations.Operation;

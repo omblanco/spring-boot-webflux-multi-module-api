@@ -1,4 +1,4 @@
-package com.omblanco.springboot.webflux.api.mongo.app.web.controllers;
+package com.omblanco.springboot.webflux.api.commons.web.controllers.appinfo;
 
 import static com.omblanco.springboot.webflux.api.commons.web.utils.BaseApiConstants.STATUS_BASE_URL_V1;
 import static org.springframework.http.MediaType.APPLICATION_JSON;

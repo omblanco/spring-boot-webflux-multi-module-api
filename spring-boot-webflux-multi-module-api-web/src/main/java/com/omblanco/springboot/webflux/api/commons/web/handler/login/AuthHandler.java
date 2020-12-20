@@ -1,4 +1,4 @@
-package com.omblanco.springboot.webflux.api.mongo.app.web.handlers;
+package com.omblanco.springboot.webflux.api.commons.web.handler.login;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
