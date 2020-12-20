@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.omblanco.springboot.webflux.api</groupId>
+		<artifactId>spring-boot-webflux-multi-module-api-model</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<artifactId>spring-boot-webflux-multi-module-api-model-sql-impl</artifactId>
+	<name>spring-boot-webflux-multi-module-api-model-sql-impl</name>
+
+	<dependencies>
+
+		<!-- Interfaz del modelo -->
+		<dependency>
+			<groupId>com.omblanco.springboot.webflux.api</groupId>
+			<artifactId>spring-boot-webflux-multi-module-api-model-interface</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<!-- Spring data jpa -->
+		<!-- TODO: revisar si se puede eliminar el starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- Reactor -->
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-core</artifactId>
+		</dependency>
+		
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
+		<!-- Modelmapper -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+		</dependency>
+		
+	</dependencies>
+</project>

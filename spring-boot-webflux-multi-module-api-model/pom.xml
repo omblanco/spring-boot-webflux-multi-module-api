@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>spring-boot-webflux-multi-module-api-model</artifactId>
+	<name>spring-boot-webflux-multi-module-api-model</name>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>com.omblanco.springboot.webflux.api</groupId>
+		<artifactId>spring-boot-webflux-multi-module-api</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<modules>
+		<module>spring-boot-webflux-multi-module-api-model-interface</module>
+		<module>spring-boot-webflux-multi-module-api-model-sql-impl</module>
+		<module>spring-boot-webflux-multi-module-api-model-mongo-impl</module>
+	</modules>
+</project>
